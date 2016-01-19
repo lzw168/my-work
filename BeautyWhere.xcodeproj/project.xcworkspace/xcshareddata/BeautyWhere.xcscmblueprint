@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "C3B9810C94B6DD8A41CD7BF4C8FBCAC7079D93F1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "C3B9810C94B6DD8A41CD7BF4C8FBCAC7079D93F1" : 0,
+    "4C0874E7C6B14D8D9BEA1ABAA5E088A3C6DE8B3F" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "E1EDDB69-E9D4-41D4-8DCB-F226A20DB4D3",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "C3B9810C94B6DD8A41CD7BF4C8FBCAC7079D93F1" : "BeautyWhere\/",
+    "4C0874E7C6B14D8D9BEA1ABAA5E088A3C6DE8B3F" : "vduanzi_ios\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "BeautyWhere",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "BeautyWhere\/BeautyWhere.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/git.oschina.net\/satian\/vduanzi_ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "4C0874E7C6B14D8D9BEA1ABAA5E088A3C6DE8B3F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/git.oschina.net\/chgl\/BeautyWhere.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C3B9810C94B6DD8A41CD7BF4C8FBCAC7079D93F1"
+    }
+  ]
+}
