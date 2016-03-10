@@ -13,12 +13,14 @@
 
 @property (nonatomic, strong)NSString *sumMarkScore;
 @property (nonatomic, strong)NSString *techMarkScore;
+@property (nonatomic, strong)UITextView *textView;
 
 @end
 
 @implementation WriteCommentViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
@@ -31,20 +33,21 @@
     [send addTarget:self action:@selector(pressedSend) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:send];
     
-    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(10, 10, ScreenWidth-20, (ScreenWidth-20)*3/4)];
-    textView.tag = commentContentViewTag;
-    textView.delegate = self;
-    textView.layer.borderWidth=.5;
-    textView.layer.borderColor = [BottomMenuSelectedColor CGColor];
-    textView.text = @"说点什么";
-    textView.textColor = [UIColor lightGrayColor];
-    textView.font = [UIFont systemFontOfSize:17];
-    [self.view addSubview:textView];
+    self.textView = [[UITextView alloc] initWithFrame:CGRectMake(10, 10, ScreenWidth-20, (ScreenWidth-20)*3/4)];
+    self.textView.tag = commentContentViewTag;
+    self.textView.delegate = self;
+    self.textView.layer.borderWidth=.5;
+    self.textView.layer.borderColor = [BottomMenuSelectedColor CGColor];
+    self.textView.text = @"说点什么";
+    self.textView.textColor = [UIColor lightGrayColor];
+    self.textView.font = [UIFont systemFontOfSize:17];
+    self.textView.returnKeyType = UIReturnKeyDone;
+    [self.view addSubview:self.textView];
     
     UILabel *sumMark = [[UILabel alloc] init];
-    sumMark.text = @"总评：";
+    sumMark.text = @"总评:";
     [sumMark sizeToFit];
-    sumMark.frame = CGRectMake(20, textView.frame.origin.y+textView.frame.size.height+60, sumMark.frame.size.width,  sumMark.frame.size.height);
+    sumMark.frame = CGRectMake(20, self.textView.frame.origin.y+self.textView.frame.size.height+60, sumMark.frame.size.width,  sumMark.frame.size.height);
     [self.view addSubview:sumMark];
     TQStarRatingView *sumMarkStar = [[TQStarRatingView alloc] initWithFrame:CGRectMake(sumMark.frame.origin.x+sumMark.frame.size.width+10, sumMark.frame.origin.y-sumMark.frame.size.height/2, 158.5, 30) numberOfStar:5 withState:MarkStateZero withStarImgWith:28.5 touch:YES];
     sumMarkStar.delegate = self;
@@ -52,7 +55,7 @@
     [self.view addSubview:sumMarkStar];
     
     UILabel *technologicMark = [[UILabel alloc] init];
-    technologicMark.text = @"技术：";
+    technologicMark.text = @"技术:";
     [technologicMark sizeToFit];
     technologicMark.frame = CGRectMake(sumMark.frame.origin.x, sumMark.frame.origin.y+sumMark.frame.size.height+30, technologicMark.frame.size.width, technologicMark.frame.size.height);
     [self.view addSubview:technologicMark];
@@ -83,13 +86,63 @@
     }
 }
 
+- (BOOL)textViewShouldReturn:(UITextField *)textView
+{
+    //输入完成隐藏键盘
+    [textView resignFirstResponder];
+    return YES;
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    NSLog(@"======================000");
+    
+    if (textView == self.textView)
+    {
+        if (textView.text.length > 16)
+        {
+            textView.text = [textView.text substringToIndex:16];
+        }
+    }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textView == self.textView)
+    {
+        if (textView.text.length > 16)
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+    }
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if ([text isEqualToString:@"\n"])
+    {
+        [textView resignFirstResponder];
+        return NO;
+    }
+    return YES;
+}
+
 #pragma mark - StarRatingViewDelegate
--(void)starRatingView:(TQStarRatingView *)view score:(float)score {//每粒星score为0.2
+-(void)starRatingView:(TQStarRatingView *)view score:(float)score
+{
+    //每粒星score为0.2
     NSLog(@"TQStarRatingView:%@  score:%f",view, score);
-    if (view.tag==sumMarkStarViewTag) {
+    if (view.tag==sumMarkStarViewTag)
+    {
         self.sumMarkScore = [NSString stringWithFormat:@"%i",(int)score*5];
     }
-    else {
+    else
+    {
         self.techMarkScore = [NSString stringWithFormat:@"%i",(int)score*5];
     }
 }
@@ -99,7 +152,8 @@
     [[self.view viewWithTag:commentContentViewTag] resignFirstResponder];
 }
 
-- (void)pressedSend {
+- (void)pressedSend
+{
     UITextView *inputComment = (UITextView*)[self.view viewWithTag:commentContentViewTag];
     NSLog(@"pressedSend");
     if ([inputComment.text isEqualToString:@""] || [inputComment.text isEqualToString:@"说点什么"]) {

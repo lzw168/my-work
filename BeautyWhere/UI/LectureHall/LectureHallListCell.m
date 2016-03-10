@@ -33,7 +33,7 @@
         imgView.tag = billListIconTag;
         [self.moveContentView addSubview:imgView];
     }
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.billImgURLLaxtComponent]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.billImgURLLaxtComponent]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     
     UILabel *billID = (UILabel *)[self.moveContentView viewWithTag:billListBillIDTag];
     if (!billID) {

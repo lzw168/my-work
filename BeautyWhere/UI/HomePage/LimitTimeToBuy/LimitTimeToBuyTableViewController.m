@@ -9,7 +9,7 @@
 #import "LimitTimeToBuyTableViewController.h"
 #import "LimitTimeToBuyTableViewCell.h"
 #import "HomePageNetwork.h"
-#import "GoodsDetailTableViewController.h"
+#import "OrderDetailTableViewController.h"
 
 @interface LimitTimeToBuyTableViewController ()
 
@@ -21,6 +21,8 @@
 @property (nonatomic, strong) CustomTableView *table;
 @property (nonatomic, assign) BOOL hasShowSeckillListNetErr;
 @property (nonatomic, strong) GoodsBean *infoBean;
+@property (nonatomic, strong) UIImageView *imageview;
+@property (nonatomic, strong) UILabel *tip;
 
 @end
 
@@ -130,7 +132,8 @@
 
 - (void)shoppingNetworkRequestWithNeedReload:(BOOL)needReload {
     __weak typeof(self) wself = self;
-    [HomePageNetwork getShoppingInfoWithStartTime:@"10" withPageNum:[NSString stringWithFormat:@"%li",(long)wself.pageNum] withSuccessBlock:^(NSMutableArray *goodsArr) {
+    [HomePageNetwork getShoppingInfoWithStartTime:@"10" withPageNum:[NSString stringWithFormat:@"%li",(long)wself.pageNum] withSuccessBlock:^(NSMutableArray *goodsArr)
+     {
         __strong RefreshDataComplete refreshCompleteBlock = wself.refreshDataFinishedBlock;
         __strong LoadDataComplete loadMoreCompleteBlock = wself.loadDataFinishedBlock;
         if (wself.pageNum == 1) {
@@ -146,10 +149,12 @@
             if (refreshCompleteBlock) {
                 refreshCompleteBlock();
             }
-            if (loadMoreCompleteBlock && wself.InfosArr.count - originalCount != 0) {
+            if (loadMoreCompleteBlock && wself.InfosArr.count - originalCount != 0)
+            {
                 loadMoreCompleteBlock((int)(wself.InfosArr.count - originalCount));
             }
-            if (wself.table.hidden) {
+            if (wself.table.hidden)
+            {
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [ProgressHUD dismiss];
                     [wself showNoDataTip:NO];
@@ -198,14 +203,16 @@
                     loadMoreCompleteBlock((int)(wself.InfosArr.count - originalCount));
                 }
                 if (wself.table.hidden) {
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+                    {
                         [wself showNoDataTip:NO];
                         wself.table.hidden = NO;
                         [ProgressHUD dismiss];
                     });
                 }
             }
-            else {
+            else
+            {
                 [ProgressHUD dismiss];
                 [wself showNoDataTip:YES];
                 wself.table.hidden = YES;
@@ -255,17 +262,19 @@
     return 90;
 }
 
--(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView {
+-(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView
+{
     CheckGoodsOnSellsType goodsOnSellsType;
-    switch (self.pageType) {
-        case PageTypeSecKill:
-            goodsOnSellsType = CheckGoodsOnSellsTypeSeckill;
-            break;
-        case PageTypeShopping:
-            goodsOnSellsType = CheckGoodsOnSellsTypeShopping;
+    switch (self.pageType)
+    {
+        case PageTypeInStore:
+            goodsOnSellsType = CheckGoodsOnSellsTypeInStore;
             break;
         case PageTypeLimitFactory:
             goodsOnSellsType = CheckGoodsOnSellsTypeLimitToFactory;
+            break;
+        case PageTypeShopping:
+            goodsOnSellsType = CheckGoodsOnSellsTypeShopping;
             break;
         default:
             NSLog(@"%li 没有该页面类型",(long)self.pageType);
@@ -284,10 +293,11 @@
         [ProgressHUD showText:@"即将开始,请耐心等待!" Interaction:YES Hide:YES];
         return;
     }
-    else {
+    else
+    {
         //seckillState.text = @"立即抢购";
     }
-    GoodsDetailTableViewController *store = [[GoodsDetailTableViewController alloc] init];
+    OrderDetailTableViewController *store = [[OrderDetailTableViewController alloc] init];
     [store passInfoBean:[self.InfosArr objectAtIndex:aIndexPath.row]];
     store.goodsOnSellsType = goodsOnSellsType;
     store.edgesForExtendedLayout = UIRectEdgeNone;
@@ -318,23 +328,42 @@
 #pragma mark - Private & Tool
 - (void)showNoDataTip:(BOOL)show {
     [ProgressHUD dismiss];
-    if (show) {
-        UILabel *tip = [[UILabel alloc] initWithFrame:self.view.bounds];
+    if (show)
+    {
+        /*UILabel *tip = [[UILabel alloc] initWithFrame:self.view.bounds];
         tip.text = @"还没商品";
         tip.textAlignment = NSTextAlignmentCenter;
         tip.center = self.view.center;
-        [self.view addSubview:tip];
+        [self.view addSubview:tip];*/
+        if (!self.imageview)
+        {
+            self.imageview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+            self.imageview.image = [UIImage imageNamed:@"nodata"];
+            self.imageview.center = self.view.center;
+            [self.view addSubview:self.imageview];
+        }
+        
+        if (!self.tip)
+        {
+            self.tip = [[UILabel alloc] initWithFrame:CGRectMake(self.imageview.frame.origin.x-50, self.imageview.frame.origin.y+70, 200, 100)];
+            self.tip.text = @"还没商品";
+            self.tip.textAlignment = NSTextAlignmentCenter;
+            [self.view addSubview:self.tip];
+        }
     }
     else {
-        [self.view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([obj isKindOfClass:[UILabel class]] && [((UILabel*)obj).text isEqualToString:@"还没商品"]) {
+        [self.view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+        {
+            if ([obj isKindOfClass:[UILabel class]] && [((UILabel*)obj).text isEqualToString:@"还没商品"])
+            {
                 [obj removeFromSuperview];
             }
         }];
     }
 }
 
-- (void)showNetErrorTip {
+- (void)showNetErrorTip
+{
     [ProgressHUD dismiss];
     UIButton *btn = [[UIButton alloc] initWithFrame:self.view.bounds];
     [btn setTitle:@"网络好像有点问题，点击屏幕重试吧~" forState:UIControlStateNormal];

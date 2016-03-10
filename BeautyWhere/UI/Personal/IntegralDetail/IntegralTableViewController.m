@@ -89,7 +89,7 @@
             item2.text = @"2.每天分享一个平台得两个臭美币";
             item2.font = [UIFont systemFontOfSize:13];
             [cell.contentView addSubview:item1];
-            [cell.contentView addSubview:item2];
+            //[cell.contentView addSubview:item2];
         }
             break;
         case 2:
@@ -162,8 +162,8 @@
                 }
                 if (!shared || !sharedContain)
                 {
-                    [ProgressHUD showText:@"分享成功，正在获取臭美币" Interaction:NO Hide:NO];
-                    [wself addMarkByShare:platformType];
+                    [ProgressHUD showText:@"分享成功" Interaction:YES Hide:YES];
+                    //[wself addMarkByShare:platformType];
                 }
                 else
                 {
@@ -220,15 +220,17 @@
 - (void)addMarkByShare:(SSDKPlatformType)platformType
 {
     __weak typeof(self)wself = self;
-    [PersonalPageNetwork addScoreWithType:@"share" withUserID:User.userID withSuccessBlock:^(BOOL finished, NSString *score) {
-        if (finished) {
-            User.score = score;
-            wself.point = score;
+    [PersonalPageNetwork addScoreWithType:@"share" withUserID:User.userID withSuccessBlock:^(BOOL finished, NSString *score)
+    {
+        if (finished)
+        {
+            User.money = score;
+            wself.point = User.money;
             [wself.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
             NSMutableDictionary *userInfoDic = [NSKeyedUnarchiver unarchiveObjectWithFile:UserInfoFilePath];
             [userInfoDic setObject:score forKey:@"score"];
             [NSKeyedArchiver archiveRootObject:userInfoDic toFile:UserInfoFilePath];
-            [ProgressHUD showText:@"分享臭美币获取成功" Interaction:YES Hide:YES];
+            //[ProgressHUD showText:@"分享臭美币获取成功" Interaction:YES Hide:YES];
             NSMutableArray *shared = [[NSUserDefaults standardUserDefaults] objectForKey:sharedItem];
             if (!shared) {
                 shared = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithInteger:platformType], nil];
@@ -238,7 +240,8 @@
             }
             [[NSUserDefaults standardUserDefaults] setObject:shared forKey:sharedItem];
         }
-        else {
+        else
+        {
             [ProgressHUD showText:@"你的分享臭美币已全部获取，不能重复获取" Interaction:YES Hide:YES];
         }
     } withErrBlock:^(NSError *err) {

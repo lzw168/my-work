@@ -18,6 +18,8 @@
 @property (atomic, copy) LoadDataComplete loadDataFinishedBlock;
 @property (atomic, copy) RefreshDataComplete refreshDataFinishedBlock;
 @property (nonatomic, strong) CustomTableView *table;
+@property (nonatomic, strong) UIImageView *imageview;
+@property (nonatomic, strong) UILabel *tip;
 
 @end
 
@@ -79,10 +81,12 @@
             [wself showNoDataTip:YES];
             wself.table.hidden = YES;
         }
-        else {
+        else
+        {
             wself.table.hidden = NO;
-            if (need) {
-//                [wself.table reloadTableViewDataSource];
+            if (need)
+            {
+//              [wself.table reloadTableViewDataSource];
                 [wself.table.homeTableView reloadData];
             }
             if (refreshCompleteBlock) {
@@ -108,17 +112,20 @@
     return self.collectedStoreArr.count;
 }
 
--(SlideTableViewCell *)cellForRowInTableView:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView {
+-(SlideTableViewCell *)cellForRowInTableView:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView
+{
     CGSize cellSize = [aTableView rectForRowAtIndexPath:aIndexPath].size;
     static NSString *vCellIdentify = @"sliderCell";
     CollectionDetailListCell *vCell = [aTableView dequeueReusableCellWithIdentifier:vCellIdentify];
-    if (vCell == nil) {
+    if (vCell == nil)
+    {
         vCell = [[CollectionDetailListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:vCellIdentify withStoreBean:[self.collectedStoreArr objectAtIndex:aIndexPath.row] withCellHeight:[aTableView rectForRowAtIndexPath:aIndexPath].size.height];
         UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, cellSize.height-0.5, ScreenWidth, 0.5)];
         line.backgroundColor = [UIColor lightGrayColor];
         [vCell.contentView addSubview:line];
     }
-    else {
+    else
+    {
         vCell.store = [self.collectedStoreArr objectAtIndex:aIndexPath.row];
         [vCell customCell];
     }
@@ -126,11 +133,13 @@
 }
 
 #pragma mark - CustomTableViewDelegate
--(float)heightForRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView {
+-(float)heightForRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView
+{
     return 90;
 }
 
--(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView {
+-(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView
+{
     StoreDetailViewController *store = [[StoreDetailViewController alloc] init];
     [store passInfoBean:[self.collectedStoreArr objectAtIndex:aIndexPath.row]];
     store.preViewController = self;
@@ -139,14 +148,16 @@
     [self.navigationController pushViewController:store animated:YES];
 }
 
--(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView {
+-(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView
+{
     self.pageNum++;
     self.refreshDataFinishedBlock = nil;
     self.loadDataFinishedBlock = complete;
     [self startNetWithLoadingTip:NO];
 }
 
--(void)refreshData:(void(^)())complete FromView:(CustomTableView *)aView {
+-(void)refreshData:(void(^)())complete FromView:(CustomTableView *)aView
+{
     self.pageNum = 1;
     self.loadDataFinishedBlock = nil;
     self.refreshDataFinishedBlock = complete;
@@ -154,7 +165,8 @@
 }
 
 #pragma mark - Button Response
-- (void)restartNet:(UIButton *)b {
+- (void)restartNet:(UIButton *)b
+{
     [b removeFromSuperview];
     [self startNetWithLoadingTip:YES];
 }
@@ -162,23 +174,38 @@
 #pragma mark - Private & Tool
 - (void)showNoDataTip:(BOOL)show {
     [ProgressHUD dismiss];
-    if (show) {
-        UILabel *tip = [[UILabel alloc] initWithFrame:self.view.bounds];
-        tip.text = @"你好像还没收藏吧~";
-        tip.textAlignment = NSTextAlignmentCenter;
-        tip.center = self.view.center;
-        [self.view addSubview:tip];
+    if (show)
+    {
+        if (!self.imageview)
+        {
+            self.imageview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+            self.imageview.image = [UIImage imageNamed:@"nodata"];
+            self.imageview.center = self.view.center;
+            [self.view addSubview:self.imageview];
+        }
+        
+        if (!self.tip)
+        {
+            self.tip = [[UILabel alloc] initWithFrame:CGRectMake(self.imageview.frame.origin.x-50, self.imageview.frame.origin.y+70, 200, 100)];
+            self.tip.text = @"你好像还没收藏吧~";
+            self.tip.textAlignment = NSTextAlignmentCenter;
+            [self.view addSubview:self.tip];
+        }
     }
-    else {
-        [self.view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([obj isKindOfClass:[UILabel class]] && [((UILabel*)obj).text isEqualToString:@"你好像还没收藏吧~"]) {
+    else
+    {
+        [self.view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+        {
+            if ([obj isKindOfClass:[UILabel class]] && [((UILabel*)obj).text isEqualToString:@"你好像还没收藏吧~"])
+            {
                 [obj removeFromSuperview];
             }
         }];
     }
 }
 
-- (void)showNetErrorTip {
+- (void)showNetErrorTip
+{
     [ProgressHUD dismiss];
     UIButton *btn = [[UIButton alloc] initWithFrame:self.view.bounds];
     [btn setTitle:@"网络好像有点问题，点击屏幕重试吧~" forState:UIControlStateNormal];
@@ -186,8 +213,10 @@
     [self.view addSubview:btn];
 }
 
-- (void)delCollectionStoreWithStoreID:(NSString *)storeID {
-    [self.collectedStoreArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+- (void)delCollectionStoreWithStoreID:(NSString *)storeID
+{
+    [self.collectedStoreArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+     {
         if ([((StoreBean*)obj).storeID isEqualToString:storeID]) {
             [self.collectedStoreArr removeObjectAtIndex:idx];
         }

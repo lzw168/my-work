@@ -10,6 +10,7 @@
 #import "HomePageNetwork.h"
 #import "NearbyStoreListCell.h"
 #import "StoreDetailViewController.h"
+#import "LineStoreDetailViewController.h"
 
 @interface NearbyStoreViewController ()
 
@@ -22,21 +23,25 @@
 @property (nonatomic, strong) NSString *sortByItem;//star:口碑； renqi：人气；  lowprice:价格；  jisu：技术  distance：距离
 @property (nonatomic, strong) NSArray *businessZoneArr;
 @property (nonatomic, strong) NSString *chosenDistrict;
-
+@property (nonatomic, strong) UIImageView *imageview;
+@property (nonatomic, strong) UILabel *tip;
 @end
 
 @implementation NearbyStoreViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     /*NSUserDefaults *accountDefaults = [NSUserDefaults standardUserDefaults];
     NSMutableArray *BusinessZone= [accountDefaults objectForKey:@"businessZone"];*/
     
+    //[self getBusinessZoneData];
+    
     if (!GetAppDelegate.businessZone || GetAppDelegate.businessZone.count<2)
     {
-        [ProgressHUD showText:@"获取附近商家信息失败，请稍后再试" Interaction:YES Hide:YES];
+        [ProgressHUD showText:@"获取信息失败，请稍后再试" Interaction:YES Hide:YES];
     }
     else
     {
@@ -52,7 +57,16 @@
         menu.frame = CGRectMake(0, 0, ScreenWidth, 44);
         menu.backgroundColor = BottomMenuBackgroundColor;
         [self.view addSubview:menu];
-        self.table = [[CustomTableView alloc] initWithFrame:CGRectMake(0, 24, ScreenWidth, self.view.bounds.size.height-self.navigationController.navigationBar.frame.size.height-[UIApplication sharedApplication].statusBarFrame.size.height-44)];
+        if([self.StoreType isEqualToString:@"1"])
+        {
+            self.table = [[CustomTableView alloc] initWithFrame:CGRectMake(0, 24, ScreenWidth, self.view.bounds.size.height-self.navigationController.navigationBar.frame.size.height-[UIApplication sharedApplication].statusBarFrame.size.height-44)];
+        }
+        else
+        {
+            self.table = [[CustomTableView alloc] initWithFrame:CGRectMake(0, 24, ScreenWidth, self.view.bounds.size.height-self.navigationController.navigationBar.frame.size.height-[UIApplication sharedApplication].statusBarFrame.size.height-88)];
+        }
+        
+        /*self.table = [[CustomTableView alloc] initWithFrame:CGRectMake(0, 24, ScreenWidth, self.view.bounds.size.height-self.navigationController.navigationBar.frame.size.height-[UIApplication sharedApplication].statusBarFrame.size.height-44)];*/
         self.table.dataSource = self;
         self.table.delegate = self;
         self.table.hidden = YES;
@@ -71,25 +85,36 @@
 - (void)startNetWithNeedReload:(BOOL)needReload
 {
     __weak typeof(self) wself = self;
-    [HomePageNetwork getNearbyStoreWithUserID:User.userID withCity:self.locatedCity withDistrict:self.chosenDistrict withLng:GetAppDelegate.lng withLat:GetAppDelegate.lat withPageNum:[NSString stringWithFormat:@"%li",(long)self.pageNum] withGroupID:self.serviceClass withTerm:self.sortByItem withSuccessBlock:^(NSArray *storeArr) {
+    NSUserDefaults *accountDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *gameuseradd= [accountDefaults objectForKey:@"useraddress"];
+    NSLog(@"保存的城市33===============%@",gameuseradd);
+    self.locatedCity = gameuseradd;
+    NSLog(@"self.locatedCity=========%@",self.locatedCity);
+    [HomePageNetwork getNearbyStoreWithUserID:User.userID withCity:self.locatedCity withDistrict:self.chosenDistrict withLng:GetAppDelegate.lng withLat:GetAppDelegate.lat withPageNum:[NSString stringWithFormat:@"%li",(long)self.pageNum] withGroupID:self.serviceClass withTerm:self.sortByItem withSuccessBlock:^(NSArray *storeArr)
+     {
         __strong RefreshDataComplete refreshCompleteBlock = wself.refreshDataFinishedBlock;
         __strong LoadDataComplete loadMoreCompleteBlock = wself.loadDataFinishedBlock;
-        if (wself.pageNum == 1) {
+        if (wself.pageNum == 1)
+        {
+            
             [wself.infosArr removeAllObjects];
         }
         NSInteger originalCount = wself.infosArr.count;
         [wself.infosArr addObjectsFromArray:storeArr];
-        if (wself.infosArr && wself.infosArr.count > 0) {
+        if (wself.infosArr && wself.infosArr.count > 0)
+        {
             [self showNoDataTip:NO];
-            if (needReload) {
+            if (needReload)
+            {
                 [wself.table.homeTableView reloadData];
-//                [wself.table reloadTableViewDataSource];
-//                [wself.table forceToFreshData];
+//              [wself.table reloadTableViewDataSource];
+//              [wself.table forceToFreshData];
             }
             if (refreshCompleteBlock) {
                 refreshCompleteBlock();
             }
-            if (loadMoreCompleteBlock && wself.infosArr.count - originalCount != 0) {
+            if (loadMoreCompleteBlock && wself.infosArr.count - originalCount != 0)
+            {
                 loadMoreCompleteBlock((int)(wself.infosArr.count - originalCount));
             }
             if (wself.table.hidden) {
@@ -98,7 +123,8 @@
                     [ProgressHUD dismiss];
                 });
             }
-            else {
+            else
+            {
                 [ProgressHUD dismiss];
             }
         }
@@ -123,7 +149,8 @@
                 [ProgressHUD showText:@"网络超时，请检查网络稍后重试" Interaction:YES Hide:YES];
             }
         }
-        else {
+        else
+        {
             [ProgressHUD showText:@"获取失败，请检查网络后重试" Interaction:YES Hide:YES];
         }
     }];
@@ -133,7 +160,7 @@
 
 - (void)PullDownMenu:(MXPullDownMenu *)pullDownMenu didSelectRowAtColumn:(NSInteger)column row:(NSInteger)row
 {
-    NSLog(@"%d ----%d", column, row);
+    NSLog(@"%ld ----%ld", column, row);
     if (column==0)
     {
         if (row==0)
@@ -145,26 +172,33 @@
             self.chosenDistrict = [GetAppDelegate.businessZone objectAtIndex:row];
         }
     }
-    else if (column==1) {
+    else if (column==1)
+    {
         if (row==0) {
             self.serviceClass = nil;
         }
-        else {
+        else
+        {
             self.serviceClass = [NSString stringWithFormat:@"%li",(long)row];
         }
     }
-    else {
-        if (row==0) {
+    else
+    {
+        if (row==0)
+        {
             self.sortByItem = nil;
         }
-        else {
+        else
+        {
             NSArray *sortedTermArr = @[@"口碑", @"人气", @"价格", @"技术", @"距离"];
-            NSDictionary *sortByItemDic = @{@"口碑":@"star", @"人气":@"renqi", @"价格":@"lowprice", @"技术":@"jisu", @"距离":@"distance"};
+            NSDictionary *sortByItemDic = @{@"口碑":@"1", @"人气":@"4", @"价格":@"6", @"技术":@"2", @"距离":@"3"};
             self.sortByItem = [sortByItemDic objectForKey:[sortedTermArr objectAtIndex:(row-1)]];
         }
     }
     [ProgressHUD show:@"加载中..." Interaction:YES Hide:NO];
     [self.table reloadTableViewDataSource];
+    [self.imageview removeFromSuperview];
+    [self.tip removeFromSuperview];
 }
 
 #pragma mark - CustomTableViewDataSource
@@ -202,12 +236,24 @@
 
 -(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView
 {
-    StoreBean *storedInfo = [self.infosArr objectAtIndex:aIndexPath.row];
-    StoreDetailViewController *store = [[StoreDetailViewController alloc] init];
-    store.title = storedInfo.storeTitle;
-    [store passInfoBean:storedInfo];
-    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
-    [self.navigationController pushViewController:store animated:YES];
+    if([self.StoreType isEqualToString:@"1"])
+    {
+        StoreBean *storedInfo = [self.infosArr objectAtIndex:aIndexPath.row];
+        LineStoreDetailViewController *store = [[LineStoreDetailViewController alloc] init];
+        store.title = storedInfo.storeTitle;
+        [store passInfoBean:storedInfo];
+        [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
+        [self.navigationController pushViewController:store animated:YES];
+    }
+    else
+    {
+        StoreBean *storedInfo = [self.infosArr objectAtIndex:aIndexPath.row];
+        StoreDetailViewController *store = [[StoreDetailViewController alloc] init];
+        store.title = storedInfo.storeTitle;
+        [store passInfoBean:storedInfo];
+        [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
+        [self.navigationController pushViewController:store animated:YES];
+    }
 }
 
 -(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView
@@ -238,24 +284,40 @@
 - (void)showNoDataTip:(BOOL)show
 {
     [ProgressHUD dismiss];
-    if (show) {
-        UILabel *tip = [[UILabel alloc] initWithFrame:self.view.bounds];
-        tip.text = @"没有商店";
-        tip.textAlignment = NSTextAlignmentCenter;
-        tip.center = self.view.center;
-        tip.backgroundColor = KMainBackgroundColor;
-        [self.view addSubview:tip];
+    if (show)
+    {
+        if(!self.imageview)
+        {
+            self.imageview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+            self.imageview.image = [UIImage imageNamed:@"nodata"];
+            self.imageview.center = self.view.center;
+            [self.view addSubview:self.imageview];
+        }
+        
+        if (!self.tip)
+        {
+            self.tip = [[UILabel alloc] initWithFrame:CGRectMake(self.imageview.frame.origin.x-50, self.imageview.frame.origin.y+70, 200, 100)];
+            self.tip.text = @"亲,没有内容哦~";
+            self.tip.textAlignment = NSTextAlignmentCenter;
+            //tip.center = self.view.center;
+            //tip.backgroundColor = KMainBackgroundColor;
+            [self.view addSubview:self.tip];
+        }
     }
-    else {
-        [self.view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([obj isKindOfClass:[UILabel class]] && [((UILabel*)obj).text isEqualToString:@"没有商店"]) {
+    else
+    {
+        [self.view.subviews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+        {
+            if ([obj isKindOfClass:[UILabel class]] && [((UILabel*)obj).text isEqualToString:@"亲,没有内容哦~"])
+            {
                 [obj removeFromSuperview];
             }
         }];
     }
 }
 
-- (void)showNetErrorTip {
+- (void)showNetErrorTip
+{
     [ProgressHUD dismiss];
     UIButton *btn = [[UIButton alloc] initWithFrame:self.view.bounds];
     [btn setTitle:@"网络好像有点问题，点击屏幕重试吧~" forState:UIControlStateNormal];
@@ -263,4 +325,34 @@
     [self.view addSubview:btn];
 }
 
+-(void) getBusinessZoneData
+{
+    [HomePageNetwork getBusinessZoneWithCity:self.locatedCity withSuccessBlock:^(NSArray *storeArr)
+     {
+         //[GetAppDelegate.businessZone removeAllObjects];//修复重复数据问题
+         NSLog(@"获取所在城市的行政区：%lu",(unsigned long)[storeArr count]);
+         //[GetAppDelegate.businessZone addObjectsFromArray:storeArr];
+         [storeArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
+          {
+              for (NSString *item in GetAppDelegate.businessZone)
+              {
+                  if ([item isEqualToString:obj])
+                  {
+                      *stop = YES;
+                      break;
+                  }
+              }
+              if (!*stop)
+              {
+                  [GetAppDelegate.businessZone removeAllObjects];
+                  [GetAppDelegate.businessZone addObject:obj];
+              }
+          }];
+         [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.businessZone forKey:@"businessZone"];
+         [[NSUserDefaults standardUserDefaults] synchronize];
+     } withErrorBlock:^(NSError *err)
+     {
+         NSLog(@"getBusinessZone err:%@",err);
+     }];
+}
 @end

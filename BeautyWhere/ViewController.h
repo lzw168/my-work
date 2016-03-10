@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "LoginViewController.h"
+#import "EAIntroPage.h"
+#import "EAIntroView.h"
 
-@interface ViewController : UIViewController <UIScrollViewDelegate>
+@interface ViewController : UIViewController <UIScrollViewDelegate,EAIntroDelegate>
 
 + (void)presentLoginViewWithViewController:(UIViewController *)vc backItemType:(BackItemType)type;
 

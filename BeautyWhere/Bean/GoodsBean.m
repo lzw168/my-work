@@ -50,10 +50,16 @@
         self.goodsBeginTime = [dic valueNull2NilForKey:@"begintime"];
         self.goodsAllInOne = [[dic valueNull2NilForKey:@"allinone"] boolValue];
         self.goodsAddTime = [dic valueNull2NilForKey:@"addtime"];
-        self.goodsLuoJiaPrice = [dic valueNull2NilForKey:@"luojiaprice"];
+        self.goodsLuoJiaPrice = [dic valueNull2NilForKey:@"act_price"];
         self.goodsTitle = [dic valueNull2NilForKey:@"title"];
         self.goodsAddress = [dic valueNull2NilForKey:@"address"];
         self.goodsCanBuy = [[dic valueNull2NilForKey:@"canbuy"] boolValue];
+        self.actID = [dic valueNull2NilForKey:@"activity_id"];
+        self.activity_price = [dic valueNull2NilForKey:@"activity_price"];
+        self.img_thumb = [dic valueNull2NilForKey:@"img_thumb"];
+        self.goods_price = [dic valueNull2NilForKey:@"goods_price"];
+        self.name = [dic valueNull2NilForKey:@"name"];
+        self.good_id = [dic valueNull2NilForKey:@"id"];
     }
     return self;
 }

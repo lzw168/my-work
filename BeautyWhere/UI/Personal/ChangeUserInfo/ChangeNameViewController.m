@@ -49,14 +49,16 @@
     [ProgressHUD show:nil];
     if (self.input.text && ![self.input.text isEqualToString:@""]) {
         __weak typeof(self) wself = self;
-        [PersonalPageNetwork changeUserName:self.input.text headerImg:nil withUserID:User.userID withMobileNumber:User.mobile withSuccessBlock:^(NSString *userName, NSString *imgURL) {
+        [PersonalPageNetwork changeUserName:self.input.text headerImg:nil withUserID:User.userID withMobileNumber:User.mobile withSuccessBlock:^(NSString *userName, NSString *imgURL)
+        {
             NSMutableDictionary *userInfoDic = [NSKeyedUnarchiver unarchiveObjectWithFile:UserInfoFilePath];
-            [userInfoDic setObject:userName forKey:@"username"];
+            [userInfoDic setObject:userName forKey:@"nickname"];
             [NSKeyedArchiver archiveRootObject:userInfoDic toFile:UserInfoFilePath];
-            User.userName = userName;
+            User.nickName = userName;
             [ProgressHUD showText:@"修改成功" Interaction:YES Hide:YES];
             [wself.navigationController popToRootViewControllerAnimated:YES];
-        } withErrorBlock:^(NSError *err) {
+        } withErrorBlock:^(NSError *err)
+        {
             NSLog(@"change username err:%@",err);
             [ProgressHUD showText:@"修改出错，请稍后重试" Interaction:YES Hide:YES];
         }];

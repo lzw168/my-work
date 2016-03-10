@@ -12,7 +12,6 @@
 #import "BillDetailTableViewController.h"
 
 typedef NS_ENUM(NSInteger, InformationPageType) {
-    InformationPageTypeSeckill,
     InformationPageTypeLimitFactory,
     InformationPageTypeArround,
     InformationPageTypeShopping
@@ -47,7 +46,7 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
     self.edgesForExtendedLayout = UIRectEdgeNone;
     [self initializeVariable];
     NSArray *views = @[self.seckillTable, self.limitFactoryTable, self.arroundTable];//, self.shoppingTable
-    NSArray *names = @[@"每日秒购",@"工厂直卖",@"附近美容"];//,@"裸价代购"
+    NSArray *names = @[@"爆款专区",@"工厂直卖",@"线下特惠"];//,@"裸价代购"
     XLScrollViewer *scroll =[XLScrollViewer scrollWithFrame:self.view.bounds withViews:views withButtonNames:names withThreeAnimation:221];
     scroll.xl_buttonColorNormal = [UIColor grayColor];
     scroll.xl_buttonColorSelected = [UIColor blackColor];
@@ -171,31 +170,7 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             }
             return self.limitFactoryInfosArr.count;
             break;
-        case InformationPageTypeSeckill:
-            if (self.seckillInfosArr.count > 0)
-            {
-                UIView *fatherView = self.seckillTable.superview;
-                UILabel *tip = (UILabel*)[fatherView viewWithTag:seckillTableNoDataTipTag];
-                [tip removeFromSuperview];
-                self.seckillTable.hidden = NO;
-            }
-            else
-            {
-                self.seckillTable.hidden = YES;
-                UIView *fatherView = self.seckillTable.superview;
-                UILabel *tip = (UILabel*)[fatherView viewWithTag:seckillTableNoDataTipTag];
-                if (!tip) {
-                    tip = [[UILabel alloc] initWithFrame:self.seckillTable.frame];
-                    tip.text = @"没有订单信息";
-                    tip.textAlignment = NSTextAlignmentCenter;
-                    tip.textColor = [UIColor lightGrayColor];
-                    tip.tag = seckillTableNoDataTipTag;
-                    [fatherView addSubview:tip];
-                }
-            }
-            return self.seckillInfosArr.count;
-            break;
-        case InformationPageTypeShopping:
+            case InformationPageTypeShopping:
             if (self.shoppingInfosArr.count > 0) {
                 UIView *fatherView = self.shoppingTable.superview;
                 UILabel *tip = (UILabel*)[fatherView viewWithTag:shoppingTableNoDataTipTag];
@@ -235,10 +210,6 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             dataArr = self.limitFactoryInfosArr;
             vCellIdentify = @"limitFactoryReuseCell";
             break;
-        case InformationPageTypeSeckill:
-            dataArr = self.seckillInfosArr;
-            vCellIdentify = @"seckillReuseCell";
-            break;
         case InformationPageTypeShopping:
             dataArr = self.shoppingInfosArr;
             vCellIdentify = @"shoppingReuseCell";
@@ -273,9 +244,6 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
         case InformationPageTypeLimitFactory:
             currentArr = self.limitFactoryInfosArr;
             break;
-        case InformationPageTypeSeckill:
-            currentArr = self.seckillInfosArr;
-            break;
         case InformationPageTypeShopping:
             currentArr = self.shoppingInfosArr;
             break;
@@ -296,9 +264,6 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
         case InformationPageTypeLimitFactory:
             self.limitFactoryPageNum++;
             break;
-        case InformationPageTypeSeckill:
-            self.seckillPageNum++;
-            break;
         case InformationPageTypeShopping:
             self.shoppingPageNum++;
             break;
@@ -315,9 +280,6 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             break;
         case InformationPageTypeLimitFactory:
             self.limitFactoryPageNum=1;
-            break;
-        case InformationPageTypeSeckill:
-            self.seckillPageNum=1;
             break;
         case InformationPageTypeShopping:
             self.shoppingPageNum=1;
@@ -343,10 +305,6 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             currentArr = self.limitFactoryInfosArr;
             table = self.limitFactoryTable;
             break;
-        case InformationPageTypeSeckill:
-            currentArr = self.seckillInfosArr;
-            table = self.seckillTable;
-            break;
         case InformationPageTypeShopping:
             currentArr = self.shoppingInfosArr;
             table = self.shoppingTable;
@@ -371,10 +329,6 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             sellsType = CheckGoodsOnSellsTypeLimitToFactory;
             currentPage = [NSString stringWithFormat:@"%li",(long)self.limitFactoryPageNum];
             break;
-        case InformationPageTypeSeckill:
-            sellsType = CheckGoodsOnSellsTypeSeckill;
-            currentPage = [NSString stringWithFormat:@"%li",(long)self.seckillPageNum];
-            break;
         case InformationPageTypeShopping:
             sellsType = CheckGoodsOnSellsTypeShopping;
             currentPage = [NSString stringWithFormat:@"%li",(long)self.shoppingPageNum];
@@ -384,7 +338,8 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
     [BillPageNetwork showOrderWithUserID:User.userID withType:sellsType withPageNum:currentPage withSucceedBlock:^(NSMutableArray *orderArr) {
         CustomTableView *table = nil;
         NSMutableArray *currentArr = nil;
-        switch (wself.pageType) {
+        switch (wself.pageType)
+        {
             case InformationPageTypeArround:
                 currentArr = wself.arroundInfosArr;
                 table = wself.arroundTable;
@@ -393,23 +348,21 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
                 currentArr = wself.limitFactoryInfosArr;
                 table = wself.limitFactoryTable;
                 break;
-            case InformationPageTypeSeckill:
-                currentArr = wself.seckillInfosArr;
-                table = wself.seckillTable;
-                break;
             case InformationPageTypeShopping:
                 currentArr = wself.shoppingInfosArr;
                 table = wself.shoppingTable;
                 break;
         }
-        if ([currentPage isEqualToString:@"1"]) {
+        if ([currentPage isEqualToString:@"1"])
+        {
             [currentArr removeAllObjects];
         }
         NSInteger originalCount = currentArr.count;
         [currentArr addObjectsFromArray:orderArr];
         __strong RefreshDataComplete refreshCompleteBlock = wself.refreshDataFinishedBlock;
         __strong LoadDataComplete loadMoreCompleteBlock = wself.loadDataFinishedBlock;
-        if (refreshCompleteBlock) {
+        if (refreshCompleteBlock)
+        {
             refreshCompleteBlock();
         }
         if (loadMoreCompleteBlock && currentArr.count - originalCount > 0) {
@@ -419,6 +372,7 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
         [ProgressHUD dismiss];
     } withErrorBlock:^(NSError *err)
     {
+        //[GetAppDelegate RefreshTtoken];
         [ProgressHUD showText:@"获取失败，请保持网络通畅" Interaction:YES Hide:YES];
     }];
 }

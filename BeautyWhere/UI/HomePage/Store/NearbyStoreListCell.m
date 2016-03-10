@@ -28,13 +28,14 @@
 
 -(void)customCell {
     UIImageView *imgView = (UIImageView *)[self.moveContentView viewWithTag:nearbyStoreIconTag];
-    if (!imgView) {
+    if (!imgView)
+    {
         imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, self.cellHeight-20, self.cellHeight-20)];
         imgView.tag = nearbyStoreIconTag;
         [self.moveContentView addSubview:imgView];
     }
-    NSLog(@" self.infoBean.storeImage]=====%@", self.infoBean.storeImage);
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.storeImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    NSLog(@" self.infoBean.storeImage]=====%@", self.infoBean.storeImageThumb);
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.storeImageThumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     
     UILabel *title = (UILabel *)[self.moveContentView viewWithTag:nearbyStoreTitleTag];
     if (!title) {
@@ -43,6 +44,7 @@
         [self.moveContentView addSubview:title];
     }
     title.text = self.infoBean.storeTitle;
+    [title setFont:[UIFont systemFontOfSize:13.0]];
     
     TQStarRatingView *starRatingView = (TQStarRatingView *)[self.moveContentView viewWithTag:nearbyStoreStarTag];
     if (!starRatingView)
@@ -60,7 +62,16 @@
         address.tag = nearbyStoreAddressTag;
         [self.moveContentView addSubview:address];
     }
-    address.text = [NSString stringWithFormat:@"%@/%@",self.infoBean.storeDistrict, self.infoBean.storeStreet];
+    if (self.infoBean.storeStreet == nil)
+    {
+        self.infoBean.storeStreet = @"";
+        address.text = [NSString stringWithFormat:@"%@%@",self.infoBean.storeDistrict, self.infoBean.storeStreet];
+    }
+    else
+    {
+        address.text = [NSString stringWithFormat:@"%@/%@",self.infoBean.storeDistrict, self.infoBean.storeStreet];
+    }
+    [address setFont:[UIFont systemFontOfSize:13.0]];
     
     CGFloat distanceNum = [self.infoBean.storeDistance floatValue];
     NSString *distanceStr = [NSString stringWithFormat:@"%.1fkm",distanceNum/1000];
@@ -72,17 +83,19 @@
         distanceStr = [NSString stringWithFormat:@"%fm",(distanceNum/1000)];
     }
     UILabel *distance = (UILabel *)[self.moveContentView viewWithTag:nearbyStoreDistanceTag];
-    if (!distance) {
+    if (!distance)
+    {
         distance = [[UILabel alloc] init];
         distance.tag = nearbyStoreDistanceTag;
         distance.textColor = [UIColor lightGrayColor];
-        [self.moveContentView addSubview:distance];
+        //[self.moveContentView addSubview:distance];
     }
     distance.text = distanceStr;
     [distance sizeToFit];
     distance.frame = CGRectMake(ScreenWidth-distance.frame.size.width-10, self.cellHeight-distance.frame.size.height-10, distance.frame.size.width, distance.frame.size.height);
     
-    [self.contentView.gestureRecognizers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [self.contentView.gestureRecognizers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+    {
         [self.contentView removeGestureRecognizer:obj];
     }];
 }

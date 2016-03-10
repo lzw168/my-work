@@ -17,6 +17,9 @@
 #import "Pingpp.h"
 #import <ShareSDKExtension/ShareSDK+Extension.h>
 #import "APService.h"
+#include "RefreshTokenNetwork.h"
+#include "RefreshTokenBean.h"
+#import "ConfigBean.h"
 
 @interface AppDelegate ()
 
@@ -28,13 +31,17 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    NSLog(@"bundle id:%@",[[NSBundle mainBundle] bundleIdentifier]);
-    NSLog(@"tmp:%@",NSTemporaryDirectory());
-    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    self.access_token = @"";
+    self.service_tel = @"";
+    self.img_path = @"";
+    self.fee_shipping_num = @"";
     // Override point for customization after application launch.
-    if ([[NSFileManager defaultManager] fileExistsAtPath:UserInfoFilePath]) {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:UserInfoFilePath])
+    {
         self.user = [[UserBean alloc] initWithUserInfoDic:[NSKeyedUnarchiver unarchiveObjectWithFile:UserInfoFilePath]];
+        NSLog(@"user_id:%@",self.user.userID);
     }
     self.businessZone = [[NSMutableArray alloc] initWithObjects:@"全部商区", nil];
     [self resetAddUserMarkPossible];
@@ -43,7 +50,8 @@
     self.mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定     generalDelegate参数
     BOOL ret = [self.mapManager start:@"MEVMEGkuqUkUxdoqi1X6YAs9" generalDelegate:nil];
-    if (!ret) {
+    if (!ret)
+    {
         NSLog(@"manager start failed!");
         self.mapManagerIsOK = NO;
     }
@@ -54,18 +62,41 @@
     
     
     // 极光通知
-    [APService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+    /*[APService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                    UIRemoteNotificationTypeSound |
                                                    UIRemoteNotificationTypeAlert)
                                        categories:nil];
     [APService setupWithOption:launchOptions];
     [application setApplicationIconBadgeNumber:0];
-    [application cancelAllLocalNotifications];
+    [application cancelAllLocalNotifications];*/
+    
+    [HomePageNetwork GetConfigInfo:^(NSMutableDictionary *ConfigDic)
+     {
+         ConfigBean *config = [[ConfigBean alloc] initWithDic:ConfigDic];
+         GetAppDelegate.img_path = config.img_path;
+         GetAppDelegate.service_tel = config.service_tel;
+         NSLog(@"config.free_shipping_num======%@",config.free_shipping_num);
+         GetAppDelegate.fee_shipping_num = config.free_shipping_num;
+         GetAppDelegate.rank_visitor = config.rank_visitor;
+         NSUserDefaults *rank_visitor = [NSUserDefaults standardUserDefaults];
+         NSString *rankvisitor= [rank_visitor objectForKey:@"rank_visitor"];
+         if (rankvisitor.length == 0)
+         {
+             [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.rank_visitor forKey:@"rank_visitor"];
+             [[NSUserDefaults standardUserDefaults] synchronize];
+         }
+         NSLog(@"rank_visitor============%@",config.rank_visitor);
+     } withErrorBlock:^(NSError *err)
+     {
+         [ProgressHUD showText:@"请检查网络后稍后再试" Interaction:YES Hide:YES];
+     }];
+
     
     return YES;
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application
+{
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     [BMKMapView willBackGround];//当应用即将后台时调用，停止一切调用opengl相关的操作
@@ -125,8 +156,9 @@
                     [ProgressHUD dismiss];
                 });
             }
-            else {
-                [ProgressHUD showText:@"支付成功，可到订单页查看" Interaction:YES Hide:YES];
+            else
+            {
+                //[ProgressHUD showText:@"支付成功，可到订单页查看" Interaction:YES Hide:YES];
                 [self.openURLHandlerViewController.navigationController popToRootViewControllerAnimated:YES];
             }
         }];
@@ -141,13 +173,14 @@
         if (error)
         {
             [ProgressHUD showText:@"支付失败" Interaction:YES Hide:NO];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+            {
                 [ProgressHUD dismiss];
             });
         }
         else
         {
-            [ProgressHUD showText:@"支付成功，可到订单页查看" Interaction:YES Hide:YES];
+            //[ProgressHUD showText:@"支付成功，可到订单页查看" Interaction:YES Hide:YES];
             [self.openURLHandlerViewController.navigationController popToRootViewControllerAnimated:YES];
         }
     }];
@@ -155,7 +188,8 @@
 }
 
 #pragma mark - Tool
-- (void)resetAddUserMarkPossible {
+- (void)resetAddUserMarkPossible
+{
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyyMMdd"];
     
@@ -175,7 +209,8 @@
     NSDate *tomorrowDate = [formatter dateFromString:tomorrowStr];
     NSLog(@"tomorrow since1970:%f",[tomorrowDate timeIntervalSince1970]);*/
     NSLog(@"loginTimeInterval:%f  todayTimeInterval:%f",loginTimeInterval, todayTimeInterval);
-    if (loginTimeInterval != todayTimeInterval) {
+    if (loginTimeInterval != todayTimeInterval)
+    {
         NSLog(@"resetAddUserMarkPossible");
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:addUserMarkByLogin];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:sharedItem];
@@ -237,7 +272,8 @@
     {
         [ProgressHUD showText:@"无网络连接，请检查" Interaction:YES Hide:YES];
     }
-    else {
+    else
+    {
         //监听网络变化
         [manager.reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
             switch (status) {
@@ -305,10 +341,11 @@
     NSLog(@"经度:%f",cloc.coordinate.longitude);
     self.lat = [NSString stringWithFormat:@"%f",cloc.coordinate.latitude];
     self.lng = [NSString stringWithFormat:@"%f",cloc.coordinate.longitude];
-    if (self.locateBlock) {
+    if (self.locateBlock)
+    {
         self.locateBlock([NSString stringWithFormat:@"%f",cloc.coordinate.longitude], [NSString stringWithFormat:@"%f",cloc.coordinate.latitude]);
     }
-//    [self.locationManager stopUpdatingLocation];
+    //[self.locationManager stopUpdatingLocation];
     CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
     [geoCoder reverseGeocodeLocation:cloc completionHandler:^(NSArray *placemarks, NSError *error)
     {
@@ -316,23 +353,28 @@
         {
             for (CLPlacemark * placemark in placemarks)
             {
-                NSDictionary *test = [placemark addressDictionary];NSLog(@"定位：%@",test);
+                NSDictionary *test = [placemark addressDictionary];
+                NSLog(@"定位：%@",test);
                 //  Country(国家)  State(省) City（市） SubLocality(区)
-                NSLog(@"%@", [test objectForKey:@"City"]);
-                [HomePageNetwork getBusinessZoneWithCity:[test objectForKey:@"City"] withSuccessBlock:^(NSArray *storeArr)
+                NSLog(@"选择城市===========%@", [test objectForKey:@"City"]);
+                /*[HomePageNetwork getBusinessZoneWithCity:[test objectForKey:@"City"] withSuccessBlock:^(NSArray *storeArr)
                 {
                     //[self.businessZone removeAllObjects];//修复重复数据问题
-                    NSLog(@"获取所在城市的行政区：%lu",(unsigned long)[self.businessZone count]);
+                    NSLog(@"获取所在城市的行政区：%lu",(unsigned long)[storeArr count]);
                     //[self.businessZone addObjectsFromArray:storeArr];
-                    [storeArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        for (NSString *item in self.businessZone) {
-                            if ([item isEqualToString:obj]) {
+                    [storeArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
+                    {
+                        for (NSString *item in self.businessZone)
+                        {
+                            if ([item isEqualToString:obj])
+                            {
                                 *stop = YES;
                                 break;
                             }
                         }
                         if (!*stop)
                         {
+                            //[self.businessZone removeAllObjects];
                             [self.businessZone addObject:obj];
                         }
                     }];
@@ -342,7 +384,7 @@
                 } withErrorBlock:^(NSError *err)
                  {
                     NSLog(@"getBusinessZone err:%@",err);
-                }];
+                }];*/
                 break;
             }
         }
@@ -352,7 +394,8 @@
 
 
 #pragma mark -
-- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
     NSString *token_str=[NSString stringWithFormat:@"%@", deviceToken];
     token_str = [token_str stringByReplacingOccurrencesOfString:@"<" withString:@""];
     token_str = [token_str stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -379,6 +422,26 @@
     NSDictionary *apsDic = userInfo[@"aps"];
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Notification" message:apsDic[@"alert"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
     [alertView show];
+}
+
+- (void) Refreshtoken
+{
+    [RefreshTokenNetwork GetRefreshToken:^(NSMutableDictionary *RefreshTokenDic)
+     {
+         [ProgressHUD dismiss];
+         RefreshTokenBean *Rtbean = [[RefreshTokenBean alloc] initWithDic:RefreshTokenDic];
+         NSLog(@"Rtbean.access_token=======%@",Rtbean.access_token);
+         GetAppDelegate.access_token = Rtbean.access_token;
+         GetAppDelegate.refresh_token = Rtbean.refresh_token;
+         
+         [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.refresh_token forKey:RefreshToken];
+         
+         [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.access_token forKey:AccessToken];
+         [[NSUserDefaults standardUserDefaults] synchronize];
+     } withErrorBlock:^(NSError *err)
+     {
+         [ProgressHUD showText:@"获取失败，请检查网络后稍后再试" Interaction:YES Hide:YES];
+     }];
 }
 
 @end

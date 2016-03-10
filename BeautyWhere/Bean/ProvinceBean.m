@@ -10,8 +10,10 @@
 
 @implementation ProvinceBean
 
-- (instancetype)initWithDic:(NSDictionary *)dic {
-    if (self = [super init]) {
+- (instancetype)initWithDic:(NSDictionary *)dic
+{
+    if (self = [super init])
+    {
         self.provinceID = [dic valueNull2NilForKey:@"id"];
         self.provinceCode = [dic valueNull2NilForKey:@"code"];
         self.provinceParentID = [dic valueNull2NilForKey:@"parentid"];

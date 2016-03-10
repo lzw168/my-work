@@ -11,19 +11,21 @@
 @implementation UserBean
 
 - (instancetype)initWithUserInfoDic:(NSDictionary *)dic {
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         self.userID = [dic valueNull2NilForKey:@"id"];
         self.email = [dic valueNull2NilForKey:@"email"];
         self.userName = [dic valueNull2NilForKey:@"username"];
+        self.nickName = [dic valueNull2NilForKey:@"nickname"];
         self.realName = [dic valueNull2NilForKey:@"realname"];
         self.alipayID = [dic valueNull2NilForKey:@"alipay_id"];
         self.password = [dic valueNull2NilForKey:@"password"];
-        self.avatar = [NSString stringWithFormat:@"%@%@",Server_ImgHost, [dic valueNull2NilForKey:@"avatar"]];
+        self.avatar = [NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, [dic valueNull2NilForKey:@"avatar"]];
         self.gender = [dic valueNull2NilForKey:@"gender"];
         self.newbie = [dic valueNull2NilForKey:@"newbie"];
         self.mobile = [dic valueNull2NilForKey:@"mobile"];
         self.qqNum = [dic valueNull2NilForKey:@"qq"];
-        self.money = [dic valueNull2NilForKey:@"money"];
+        self.money = [NSString stringWithFormat:@"%0.1f",[[dic valueNull2NilForKey:@"money"]intValue]/100.00];
         self.score = [dic valueNull2NilForKey:@"score"];
         self.zipCode = [dic valueNull2NilForKey:@"zipcode"];
         self.address = [dic valueNull2NilForKey:@"address"];

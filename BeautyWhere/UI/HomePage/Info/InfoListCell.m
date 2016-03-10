@@ -36,7 +36,7 @@
         imgView.tag = infoListIconViewTag;
         [self.moveContentView addSubview:imgView];
     }
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.infoImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.infoImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     
     UILabel *title = (UILabel*)[self.moveContentView viewWithTag:infoListTitleTag];
     if (!title)

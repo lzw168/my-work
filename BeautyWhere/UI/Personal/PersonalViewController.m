@@ -16,13 +16,14 @@
 #import "IntegralTableViewController.h"
 #import "InformationViewController.h"
 #import "MyAddressViewController.h"
+#import "MorePageNetwork.h"
 
 @interface PersonalViewController ()
 
 @property (nonatomic, weak) UserBean *user;
 @property (nonatomic, strong) NSArray *iconArr;
 @property (nonatomic, strong) NSArray *titleArr;
-
+@property (nonatomic, strong) UIImageView *header;
 @end
 
 @implementation PersonalViewController
@@ -31,25 +32,57 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.iconArr = @[@"gerenxinxi-youhuijun.png", @"gerenxinxi-shoucang.png",@"order_48.png",@"gerenzhongxin-icon-jifen.png",@"icon_address.png"];
-    self.titleArr = @[@"优惠券", @"我的收藏",@"我的订单", @"我的臭美币",@"我的收货地址"];
-    self.tableView.scrollEnabled = NO;
+    self.iconArr = @[@"gerenxinxi-youhuijun.png", @"gerenxinxi-shoucang.png",@"order_48.png",@"gerenzhongxin-icon-jifen.png",@"icon_address.png",@"icon_call.png"];
+    self.titleArr = @[@"优惠券", @"我的收藏",@"我的订单", @"我的臭美币",@"我的收货地址",@"联系客服"];
+    self.tableView.scrollEnabled = YES;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.backgroundColor = [UIColor whiteColor];
     self.view.backgroundColor = [UIColor whiteColor];
     self.tableView.tableFooterView.backgroundColor = [UIColor whiteColor];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     NSLog(@"User:%@",User);
-    NSLog(@"User.userID:%@",User.userID);
-    if (!User || !User.userID) {
+    NSLog(@"User.userID------3:%@",User.userID);
+    if (!User || !User.userID||User == nil)
+    {
         LoginViewController *login = [[LoginViewController alloc] init];
         login.edgesForExtendedLayout = UIRectEdgeNone;
         login.backItemType = BackItemTypeNone;
         login.enterType = EnterTypePush;
         [self.navigationController pushViewController:login animated:NO];
+    }
+    else
+    {
+        [MorePageNetwork refleshUserInfoWithUserID:User.userID withSuccessBlock:^(BOOL finished)
+         {
+             if (!finished)
+             {
+                 NSLog(@"获取不了新用户信息的json 数据");
+             }
+             else
+             {
+                 //[ProgressHUD showText:@"臭美币更新成功" Interaction:YES Hide:YES];
+                 [self.header setImageWithURL:[NSURL URLWithString:User.avatar] placeholderImage:[UIImage imageNamed:@"touxiang.png"]];
+             }
+         } withErrorBlock:^(NSError *err)
+         {
+             NSLog(@"更新用户信息有误:%@",err);
+             NSError *error = nil;
+             BOOL removeFinished;
+             removeFinished = [[NSFileManager defaultManager] removeItemAtPath:UserInfoFilePath error:&error];
+             if (error)
+             {
+                 NSLog(@"删除用户信息文件有误:%@",error);
+             }
+             else if (removeFinished)
+             {
+                 User = nil;
+             }
+             [ProgressHUD showText:@"获取不了新的用户数据，请重新登录" Interaction:YES Hide:YES];
+         }];
     }
     [self.tableView reloadData];
 }
@@ -61,7 +94,7 @@
 
 #pragma mark - UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    return 6;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -90,7 +123,7 @@
             number.text = @"";
             break;
         case 3:
-            number.text = User.score;
+            number.text = User.money;
             number.font = [UIFont systemFontOfSize:13.0];
             break;
         case 4:
@@ -124,16 +157,34 @@
         case 2:
             targetViewController = [[InformationViewController alloc] init];
             targetViewController.title = @"我的订单";
+            [self.navigationController.view viewWithTag:homeTitleTag].hidden = YES;
+            targetViewController.hidesBottomBarWhenPushed = YES;
+            [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
+            targetViewController.edgesForExtendedLayout = UIRectEdgeNone;
+            [self.navigationController pushViewController:targetViewController animated:YES];
+            return;
             break;
 
         case 3:
             targetViewController = [[IntegralTableViewController alloc] init];
             targetViewController.title = @"臭美币获取";
-            ((IntegralTableViewController*)targetViewController).point = User.score;
+            ((IntegralTableViewController*)targetViewController).point = User.money;
             break;
         case 4:
             targetViewController = [[MyAddressViewController alloc] init];
             targetViewController.title = @"收货地址";
+            [self.navigationController.view viewWithTag:homeTitleTag].hidden = YES;
+            targetViewController.hidesBottomBarWhenPushed = YES;
+            [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
+            targetViewController.edgesForExtendedLayout = UIRectEdgeNone;
+            [self.navigationController pushViewController:targetViewController animated:YES];
+            return;
+            break;
+        case 5:
+            {
+                NSString *telStr = [NSString stringWithFormat:@"tel://%@",GetAppDelegate.service_tel];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telStr]];
+            }
             break;
     }
     if (targetViewController)
@@ -161,21 +212,22 @@
     changeInfo.backgroundColor = KMainBackgroundColor;
     [changeInfo addTarget:self action:@selector(changeUserInfo) forControlEvents:UIControlEventTouchUpInside];
     UIImage *headerImg = [UIImage imageNamed:@"touxiang.png"];
-    if (self.cacheHeaderImg) {
-        headerImg = self.cacheHeaderImg;
+    if (GetAppDelegate.cacheHeaderImg)
+    {
+        headerImg = GetAppDelegate.cacheHeaderImg;
     }
-//    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth/2-15-headerImg.size.width, (changeInfo.frame.size.height-headerImg.size.height)/2, headerImg.size.width, headerImg.size.height)];
-    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth/2-60, 0, 60, 60)];
-    header.layer.cornerRadius = header.frame.size.width/2;
-    header.clipsToBounds = YES;
-    header.center = CGPointMake(header.center.x, changeInfo.center.y);
-    [header setImageWithURL:[NSURL URLWithString:User.avatar] placeholderImage:headerImg];
-//    header.image = headerImg;
+//  UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth/2-15-headerImg.size.width, (changeInfo.frame.size.height-headerImg.size.height)/2, headerImg.size.width, headerImg.size.height)];
+    self.header = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth/2-60, 0, 60, 60)];
+    self.header.layer.cornerRadius = self.header.frame.size.width/2;
+    self.header.clipsToBounds = YES;
+    self.header.center = CGPointMake(self.header.center.x, changeInfo.center.y);
+    //[header setImageWithURL:[NSURL URLWithString:User.avatar] placeholderImage:headerImg];
+    self.header.image = headerImg;
     
     UILabel *name = [[UILabel alloc] init];
     name.text = User.userName;
     name.font = [UIFont systemFontOfSize:13.0];
-    name.frame = CGRectMake(header.frame.size.width+header.frame.origin.x+10, header.frame.origin.y+5, ScreenWidth-(header.frame.size.width+header.frame.origin.x+10)-10, 18);
+    name.frame = CGRectMake(self.header.frame.size.width+self.header.frame.origin.x+10, self.header.frame.origin.y+5, ScreenWidth-(self.header.frame.size.width+self.header.frame.origin.x+10)-10, 18);
     
     UILabel *phone = [[UILabel alloc] init];
     phone.text = User.mobile;
@@ -185,22 +237,13 @@
     
 //    UIImageView *vipCard = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"meifenka_pre.png"]];
     CGFloat maxTextWidth = MAX(name.frame.size.width, phone.frame.size.width);
-    CGFloat totalWidth = maxTextWidth + header.frame.size.width;
-    header.frame = CGRectMake((ScreenWidth-totalWidth)/2, header.frame.origin.y, header.frame.size.width, header.frame.size.height);
-    name.frame = CGRectMake(header.frame.size.width+header.frame.origin.x+10, name.frame.origin.y, name.frame.size.width, name.frame.size.height);
+    CGFloat totalWidth = maxTextWidth +self.header.frame.size.width;
+    self.header.frame = CGRectMake((ScreenWidth-totalWidth)/2, self.header.frame.origin.y, self.header.frame.size.width, self.header.frame.size.height);
+    name.frame = CGRectMake(self.header.frame.size.width+self.header.frame.origin.x+10, name.frame.origin.y, name.frame.size.width, name.frame.size.height);
     phone.frame = CGRectMake(name.frame.origin.x, phone.frame.origin.y, phone.frame.size.width, phone.frame.size.height);
-    [changeInfo addSubview:header];
+    [changeInfo addSubview:self.header];
     [changeInfo addSubview:name];
     [changeInfo addSubview:phone];
-//    [changeInfo addSubview:vipCard];
-    
-//    CGFloat contentWidth = header.frame.size.width + phone.frame.size.width + 15;
-//    CGFloat originalHeaderX = header.frame.origin.x;
-//    header.frame = CGRectMake((ScreenWidth-contentWidth)/2, header.frame.origin.y, header.frame.size.width, header.frame.size.height);
-//    CGFloat gap = originalHeaderX - header.frame.origin.x;
-//    name.frame = CGRectMake(name.frame.origin.x-gap, name.frame.origin.y, name.frame.size.width, name.frame.size.height);
-//    phone.frame = CGRectMake(name.frame.origin.x, name.frame.size.height+name.frame.origin.y, phone.frame.size.width, phone.frame.size.height);
-//    vipCard.frame = CGRectMake(phone.frame.origin.x+phone.frame.size.width+10, phone.frame.origin.y, vipCard.frame.size.width, vipCard.frame.size.height);
     
     return changeInfo;
 }

@@ -36,7 +36,8 @@ static const NSInteger defaultCountDown = 59;
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor = NavBarColor;
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-    if (self.backItemType == BackItemTypeBackImg) {
+    if (self.backItemType == BackItemTypeBackImg)
+    {
         UIImage *backImg = [UIImage imageNamed:@"nav-btn-fanhui.png"];
         UIButton *back = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, backImg.size.width, backImg.size.height)];
         [back setImage:backImg forState:UIControlStateNormal];
@@ -44,13 +45,15 @@ static const NSInteger defaultCountDown = 59;
         UIBarButtonItem *navBack = [[UIBarButtonItem alloc] initWithCustomView:back];
         self.navigationItem.leftBarButtonItem = navBack;
     }
-    else if (self.backItemType == BackItemTypeNone) {
+    else if (self.backItemType == BackItemTypeNone)
+    {
         self.navigationItem.hidesBackButton = YES;
     }
     [self setUI];
 }
 
-- (void)setUI {
+- (void)setUI
+{
     [self.view addSubview:self.phoneNum];
     [self.view addSubview:self.checkCode];
     [self.view addSubview:self.getCodeBtn];
@@ -77,7 +80,8 @@ static const NSInteger defaultCountDown = 59;
     [self.view addSubview:loginBtn];
     BOOL hasWXClient = [ShareSDK isClientInstalled:SSDKPlatformTypeWechat];
     BOOL hasQQClient = [ShareSDK isClientInstalled:SSDKPlatformTypeQQ];
-    if (self.pageType == LoginPageTypeLogin && (hasWXClient || hasQQClient)) {
+    if (self.pageType == LoginPageTypeLogin && (hasWXClient || hasQQClient))
+    {
         UILabel *loginByTencentTitle = [[UILabel alloc] init];
         loginByTencentTitle.text = @"其他方式登录";
         loginByTencentTitle.textColor = [UIColor lightGrayColor];
@@ -94,19 +98,30 @@ static const NSInteger defaultCountDown = 59;
         [self.view addSubview:rightLine];
         
         CGRect qqBtnRect = CGRectZero;
-        if (hasQQClient) {
+        if (hasQQClient)
+        {
             UIImage *loginByQQBtnImg = [UIImage imageNamed:@"denglu-icon-qq.png"];
             UIButton *loginByQQBtn = [[UIButton alloc] initWithFrame:CGRectMake((ScreenWidth-68.5-2*loginByQQBtnImg.size.width)/2.0, 10+leftLine.frame.size.height+leftLine.frame.origin.y, loginByQQBtnImg.size.width, loginByQQBtnImg.size.height)];
             [loginByQQBtn setImage:loginByQQBtnImg forState:UIControlStateNormal];
             [loginByQQBtn addTarget:self action:@selector(pressedLoginByQQ) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:loginByQQBtn];
             qqBtnRect = loginByQQBtn.frame;
-            if (!hasWXClient) {
+            if (!hasWXClient)
+            {
                 loginByQQBtn.center = CGPointMake(ScreenWidth/2, loginByQQBtn.center.y);
             }
         }
+        else
+        {
+            UIImage *loginByQQBtnImg = [UIImage imageNamed:@"denglu-icon-qq.png"];
+            UIButton *loginByQQBtn = [[UIButton alloc] initWithFrame:CGRectMake((ScreenWidth-68.5-2*loginByQQBtnImg.size.width)/2.0, 10+leftLine.frame.size.height+leftLine.frame.origin.y, loginByQQBtnImg.size.width, loginByQQBtnImg.size.height)];
+            [loginByQQBtn setImage:loginByQQBtnImg forState:UIControlStateNormal];
+            [loginByQQBtn addTarget:self action:@selector(pressedLoginByQQ) forControlEvents:UIControlEventTouchUpInside];
+            qqBtnRect = loginByQQBtn.frame;
+        }
         CGRect wxBtnRect = CGRectZero;
-        if (hasWXClient) {
+        if (hasWXClient)
+        {
             UIButton *loginByWeChat = [[UIButton alloc] initWithFrame:CGRectMake(qqBtnRect.size.width+qqBtnRect.origin.x+68.5, qqBtnRect.origin.y, qqBtnRect.size.width, qqBtnRect.size.height)];
             [loginByWeChat setImage:[UIImage imageNamed:@"denglu-icon-weixin.png"] forState:UIControlStateNormal];
             [loginByWeChat addTarget:self action:@selector(pressedLoginByWeChat) forControlEvents:UIControlEventTouchUpInside];
@@ -120,12 +135,14 @@ static const NSInteger defaultCountDown = 59;
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     if (User) {
         [self pressedBack];
     }
-    if (ScreenHeight < 568) {
+    if (ScreenHeight < 568)
+    {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showKeyboard:) name:UIKeyboardDidShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dismissKeyboard:) name:UIKeyboardWillHideNotification object:nil];
     }
@@ -176,10 +193,12 @@ static const NSInteger defaultCountDown = 59;
 }
 
 #pragma mark - UITextFieldDelegate
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
     NSString *phoneRegex = @"[0-9]";
     NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",phoneRegex];
-    if (![string isEqualToString:@""]) {
+    if (![string isEqualToString:@""])
+    {
         if (textField.text.length >= 11 || ![phoneTest evaluateWithObject:string]) {
             return NO;
         }
@@ -196,20 +215,25 @@ static const NSInteger defaultCountDown = 59;
 - (void)loginWithThirdParty:(NSString *)type {
     //1、获取用户信息；2、用接口
     __weak typeof(self) wself = self;
-    if ([type isEqualToString:ThirdPartyLoginWithQQ]) {
-        [ShareSDK getUserInfo:SSDKPlatformTypeQQ onStateChanged:^(SSDKResponseState state, SSDKUser *user, NSError *error) {
-            wself.socialUser = user;NSLog(@"SSDKUser:%@",user);
-            [MorePageNetwork loginWithThirdPartyNickName:user.nickname withType:ThirdPartyLoginWithQQ withSuccessBlock:^(BOOL finished) {
-                if (!finished) {/*
-                                 LoginViewController *bind = [[LoginViewController alloc] init];
-                                 bind.backItemType = BackItemTypeBackImg;
-                                 bind.enterType = EnterTypePresent;
-                                 bind.pageType = LoginPageTypeBindPhoneNum;
-                                 bind.edgesForExtendedLayout = UIRectEdgeNone;
-                                 UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:bind];
-                                 [wself presentViewController:nav animated:YES completion:^{
-                                 [ProgressHUD dismiss];
-                                 }];*/
+    if ([type isEqualToString:ThirdPartyLoginWithQQ])
+    {
+        [ShareSDK getUserInfo:SSDKPlatformTypeQQ onStateChanged:^(SSDKResponseState state, SSDKUser *user, NSError *error)
+        {
+            wself.socialUser = user;
+            NSLog(@"SSDKUser:%@",user);
+            [MorePageNetwork loginWithThirdPartyNickName:user.uid withType:ThirdPartyLoginWithQQ withSuccessBlock:^(BOOL finished)
+             {
+                if (!finished)
+                {/*
+                  LoginViewController *bind = [[LoginViewController alloc] init];
+                  bind.backItemType = BackItemTypeBackImg;
+                  bind.enterType = EnterTypePresent;
+                  bind.pageType = LoginPageTypeBindPhoneNum;
+                  bind.edgesForExtendedLayout = UIRectEdgeNone;
+                  UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:bind];
+                 [wself presentViewController:nav animated:YES completion:^{
+                 [ProgressHUD dismiss];
+                }];*/
                     [ProgressHUD showText:@"登录失败，服务器好像有点问题哦~" Interaction:YES Hide:YES];
                 }
                 else {
@@ -249,14 +273,16 @@ static const NSInteger defaultCountDown = 59;
 }
 
 #pragma mark - Button Response
-- (void)pressedLoginByQQ {
+- (void)pressedLoginByQQ
+{
     [ProgressHUD show:nil Interaction:NO Hide:NO];
     GetAppDelegate.openURLHandlerViewController = self;
     [SSEThirdPartyLoginHelper loginByPlatform:SSDKPlatformTypeQQ onUserSync:^(SSDKUser *user, SSEUserAssociateHandler associateHandler) {
         NSLog(@"QQ SSDKUser:%@",user);
         self.socialUser = user;
         associateHandler (user.uid, user, user);
-    } onLoginResult:^(SSDKResponseState state, SSEBaseUser *user, NSError *error) {
+    } onLoginResult:^(SSDKResponseState state, SSEBaseUser *user, NSError *error)
+    {
         if (state == SSDKResponseStateSuccess)
         {NSLog(@"QQ SSEBaseUser:%@",user);
             [self loginWithThirdParty:ThirdPartyLoginWithQQ];
@@ -317,15 +343,18 @@ static const NSInteger defaultCountDown = 59;
         btn.backgroundColor = [UIColor lightGrayColor];
         [btn setTitle:[NSString stringWithFormat:@"%li秒",(long)self.countDown] forState:UIControlStateDisabled];
         __weak typeof(self) wself = self;
-        [MorePageNetwork getCheckCodeWithPhoneNum:self.phoneNum.text withSuccessBlock:^(BOOL finished) {
-            if (!finished) {
+        [MorePageNetwork getCheckCodeWithPhoneNum:self.phoneNum.text withSuccessBlock:^(BOOL finished)
+        {
+            if (!finished)
+            {
                 [NSObject cancelPreviousPerformRequestsWithTarget:self];
                 [ProgressHUD showText:@"验证码获取失败，请重新获取" Interaction:YES Hide:YES];
                 wself.getCodeBtn.enabled = YES;
                 wself.getCodeBtn.backgroundColor = NavBarColor;
                 wself.countDown = defaultCountDown;
             }
-        } withErrorBlock:^(NSError *err) {
+        } withErrorBlock:^(NSError *err)
+        {
             NSLog(@"getCheckCodeWithPhoneNum err:%@",err);
             [NSObject cancelPreviousPerformRequestsWithTarget:self];
             [ProgressHUD showText:@"验证码获取失败，请检查网络后重新获取" Interaction:YES Hide:YES];
@@ -379,7 +408,8 @@ static const NSInteger defaultCountDown = 59;
 #pragma mark - Private
 - (void)countDown2RegetCode {
     self.countDown--;
-    if (self.countDown >= 0) {
+    if (self.countDown >= 0)
+    {
         [self.getCodeBtn setTitle:[NSString stringWithFormat:@"%li秒",(long)self.countDown] forState:UIControlStateDisabled];
         [self performSelector:@selector(countDown2RegetCode) withObject:nil afterDelay:1];
     }
@@ -393,7 +423,7 @@ static const NSInteger defaultCountDown = 59;
 #pragma mark - Setter & Getter
 - (UITextField *)phoneNum {
     if (!_phoneNum) {
-        _phoneNum = [[UITextField alloc] initWithFrame:CGRectMake(20, 40, ScreenWidth-40, 50)];
+        _phoneNum = [[UITextField alloc] initWithFrame:CGRectMake(20, 20, ScreenWidth-40, 50)];
         _phoneNum.borderStyle = UITextBorderStyleRoundedRect;
         _phoneNum.layer.borderWidth = .5;
         _phoneNum.layer.borderColor = [NavBarColor CGColor];

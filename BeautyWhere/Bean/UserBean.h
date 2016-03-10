@@ -13,6 +13,7 @@
 @property (nonatomic, strong) NSString *userID;
 @property (nonatomic, strong) NSString *email;
 @property (nonatomic, strong) NSString *userName;
+@property (nonatomic, strong) NSString *nickName;
 @property (nonatomic, strong) NSString *realName;
 @property (nonatomic, strong) NSString *alipayID;
 @property (nonatomic, strong) NSString *password;

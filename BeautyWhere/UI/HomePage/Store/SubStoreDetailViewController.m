@@ -182,7 +182,7 @@
                 case 0:
                 {
                     UIImageView *pic = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, CellHeight)];
-                    [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.storeImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+                    [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.storeImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
                     self.Img = [pic image];
                     [cell.contentView addSubview:pic];
                 }
@@ -191,16 +191,48 @@
                 case 2:
                 {
                     NSString *iconImgStr = indexPath.row==1?@"dengwei.png":@"lianxidianhua.png";
-                    cell.imageView.image = [UIImage imageNamed:iconImgStr];
+                    UIImageView * headicon = [[UIImageView alloc]init];
+                    headicon.image = [UIImage imageNamed:iconImgStr];
+                    if (indexPath.row==1)
+                    {
+                        [headicon setFrame:CGRectMake(15, CellHeight/2-7.5, 35*RatioWidth, 50*RatioHeight)];
+                    }
+                    else
+                    {
+                        [headicon setFrame:CGRectMake(15, CellHeight/2-7.5, 24*RatioWidth, 44*RatioHeight)];
+                    }
+                    //cell.imageView.image = [UIImage imageNamed:iconImgStr];
+                    UILabel *textlabel = [[UILabel alloc]init];
+                    [textlabel setFrame:CGRectMake(headicon.frame.origin.x+25, CellHeight/2-15, ScreenWidth-headicon.frame.origin.x-25, 30)];
+                    [textlabel setFont:[UIFont systemFontOfSize:13.0]];
                     NSString *context = indexPath.row==1?self.infoBean.storeAddress:self.infoBean.storePhone;
-                    cell.textLabel.text = context;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    //cell.textLabel.text = context;
+                    //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    textlabel.text = context;
+                    [cell.contentView addSubview:headicon];
+                    [cell.contentView addSubview:textlabel];
                 }
                     break;
                 case 3:
-                    cell.imageView.image = [UIImage imageNamed:@"lianxidianhua.png"];
-                    cell.textLabel.text = self.infoBean.storeMobile;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                {
+                    //cell.imageView.image = [UIImage imageNamed:@"lianxidianhua.png"];
+                    //cell.textLabel.text = self.infoBean.storeMobile;
+                    //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    
+                    NSString *iconImgStr = @"lianxidianhua.png";
+                    UIImageView * headicon = [[UIImageView alloc]init];
+                    headicon.image = [UIImage imageNamed:iconImgStr];
+                    [headicon setFrame:CGRectMake(15, CellHeight/2-7.5, 24*RatioWidth, 44*RatioHeight)];
+                    //cell.imageView.image = [UIImage imageNamed:iconImgStr];
+                    UILabel *textlabel = [[UILabel alloc]init];
+                    [textlabel setFrame:CGRectMake(headicon.frame.origin.x+25, CellHeight/2-15, 180, 30)];
+                    [textlabel setFont:[UIFont systemFontOfSize:13.0]];
+                    NSString *context = self.infoBean.storeMobile;
+                    textlabel.text = context;
+                    [cell.contentView addSubview:headicon];
+                    [cell.contentView addSubview:textlabel];
+                    
+                }
                     break;
             }
         }
@@ -239,7 +271,7 @@
 {
     GoodsBean *goods = [self.goodsArr objectAtIndex:row];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, cellHeight-20, cellHeight-20)];
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, goods.goodsImgLastComponentURL]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, goods.img_thumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [cell.contentView addSubview:imgView];
     
     UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
@@ -269,11 +301,11 @@
 {
     CommentBean *comment = [self.commentArr objectAtIndex:row];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, cellHeight-20, cellHeight-20)];
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, comment.commentAvatar]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, comment.commentAvatar]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [cell.contentView addSubview:imgView];
     
     UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
-    name.text = comment.commentUserName;
+    name.text = comment.commentNickName;
     [cell.contentView addSubview:name];
     
     CGSize contentSize = [comment.commentContent boundingRectWithSize:CGSizeMake(ScreenWidth-name.frame.origin.x, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:nil context:nil].size;
@@ -288,7 +320,7 @@
 {
     StoreList *goods = [self.shopsArr objectAtIndex:row];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, cellHeight-20, cellHeight-20)];
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, goods.image]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, goods.image]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [cell.contentView addSubview:imgView];
     
     UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
@@ -454,7 +486,7 @@
 {
     //if ([self.presentedViewController isKindOfClass:[CollectionDetailViewController class]]) {
     [ProgressHUD show:@"请稍后..." Interaction:YES Hide:NO];
-    [HomePageNetwork collectStoreWithUserID:User.userID withPartnerID:self.infoBean.storeID withType:self.isCollected?@"cancel":@"collect" withSuccessBlock:^(BOOL finished)
+    [HomePageNetwork collectStoreWithUserID:User.userID withPartnerID:self.infoBean.storeID withType:self.isCollected?@"0":@"1" withSuccessBlock:^(BOOL finished)
      {
          if (finished)
          {
@@ -533,40 +565,45 @@
     
     //__weak typeof(self)wself = self;
     SSUIShareActionSheetController *sheet = [ShareSDK showShareActionSheet:self.view items:@[@(SSDKPlatformTypeSinaWeibo), @(SSDKPlatformSubTypeQQFriend), @(SSDKPlatformSubTypeWechatSession), @(SSDKPlatformSubTypeWechatTimeline)] shareParams:shareParams onShareStateChanged:^(SSDKResponseState state, SSDKPlatformType platformType, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error, BOOL end)
-                                             {
-                                                 NSLog(@"platformType:%lu",(unsigned long)platformType);
-                                                 switch (state) {
-                                                     case SSDKResponseStateBegin:
-                                                         [ProgressHUD show:nil Interaction:NO Hide:NO];
-                                                         break;
-                                                     case SSDKResponseStateSuccess:
-                                                     {
-                                                         NSMutableArray *shared = [[NSUserDefaults standardUserDefaults] objectForKey:sharedItem];
-                                                         BOOL sharedContain = NO;
-                                                         for (NSNumber *item in shared) {
-                                                             if (platformType == [item integerValue]) {
-                                                                 sharedContain = YES;
-                                                                 break;
-                                                             }
-                                                         }
-                                                         if (!shared || !sharedContain)
-                                                         {
-                                                             [ProgressHUD showText:@"分享成功，正在获取臭美币" Interaction:NO Hide:NO];
-                                                             
-                                                         }
-                                                         else {
-                                                             [ProgressHUD showText:@"分享成功" Interaction:YES Hide:YES];
-                                                         }
-                                                     }
-                                                         break;
-                                                     case SSDKResponseStateFail:
-                                                         [ProgressHUD showText:@"分享失败" Interaction:YES Hide:YES];
-                                                         break;
-                                                     default:
-                                                         [ProgressHUD showText:@"取消分享" Interaction:YES Hide:YES];
-                                                         break;
-                                                 }
-                                             }];
+                                             
+    {
+        NSLog(@"platformType:%lu",(unsigned long)platformType);
+        switch (state)
+        {
+            case SSDKResponseStateBegin:
+            [ProgressHUD show:nil Interaction:NO Hide:NO];
+            break;
+            case SSDKResponseStateSuccess:
+            {
+                NSMutableArray *shared = [[NSUserDefaults standardUserDefaults] objectForKey:sharedItem];
+                BOOL sharedContain = NO;
+                for (NSNumber *item in shared)
+                {
+                    if (platformType == [item integerValue])
+                    {
+                        sharedContain = YES;
+                        break;
+                    }
+                }
+                if (!shared || !sharedContain)
+                {
+                    [ProgressHUD showText:@"分享成功" Interaction:YES Hide:YES];
+                    return;
+                }
+                else
+                {
+                    [ProgressHUD showText:@"分享成功" Interaction:YES Hide:YES];
+                }
+            }
+                break;
+                case SSDKResponseStateFail:
+                [ProgressHUD showText:@"分享失败" Interaction:YES Hide:YES];
+                break;
+                default:
+                [ProgressHUD showText:@"取消分享" Interaction:YES Hide:YES];
+                break;
+            }
+    }];
     [sheet.directSharePlatforms addObject:@(SSDKPlatformTypeSinaWeibo)];
 }
 

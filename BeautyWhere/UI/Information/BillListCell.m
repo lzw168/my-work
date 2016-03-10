@@ -33,7 +33,7 @@
         imgView.tag = billListIconTag;
         [self.moveContentView addSubview:imgView];
     }
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.billImgURLLaxtComponent]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.billImgURLLaxtComponent]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     
     UILabel *billID = (UILabel *)[self.moveContentView viewWithTag:billListBillIDTag];
     if (!billID) {
@@ -41,8 +41,9 @@
         billID.tag = billListBillIDTag;
         [self.moveContentView addSubview:billID];
     }
-    billID.text = self.infoBean.billOrderID;
+    billID.text = [NSString stringWithFormat:@"订单号:%@",self.infoBean.billOrderID];
     billID.font = [UIFont systemFontOfSize:13];
+    billID.textColor = [UIColor grayColor];
     
     UILabel *goodsName = (UILabel *)[self.moveContentView viewWithTag:billListGoodsNameTag];
     if (!goodsName) {
@@ -64,17 +65,21 @@
         [self.moveContentView addSubview:payState];
     }
     NSString *payStateStr = self.infoBean.billState;
-    if ([payStateStr isEqualToString:@"unpay"]) {
-        payState.text = @"未支付";
+    if ([payStateStr isEqualToString:@"unpay"])
+    {
+        payState.text = @"订单状态:未支付";
     }
-    else if ([payStateStr isEqualToString:@"cancel"]) {
-        payState.text = @"支付取消";
+    else if ([payStateStr isEqualToString:@"cancel"])
+    {
+        payState.text = @"单状态:支付取消";
     }
-    else if ([payStateStr isEqualToString:@"pay"]) {
-        payState.text = @"已支付";
+    else if ([payStateStr isEqualToString:@"pay"])
+    {
+        payState.text = @"单状态:已支付";
     }
-    else if ([payStateStr isEqualToString:@"done"]) {
-        payState.text = @"已使用";
+    else if ([payStateStr isEqualToString:@"done"])
+    {
+        payState.text = @"单状态:已使用";
     }
     payState.font = [UIFont systemFontOfSize:13];
     payState.textColor = [UIColor grayColor];

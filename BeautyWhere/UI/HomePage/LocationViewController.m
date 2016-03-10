@@ -6,9 +6,10 @@
 //  Copyright (c) 2015年 Michael. All rights reserved.
 //
 
-#import "LocationViewController.h"
+#import "CityViewController.h"
 #import "HomePageNetwork.h"
 #import "ProvinceBean.h"
+#import "LocationViewController.h"
 
 @interface LocationViewController ()
 
@@ -18,7 +19,8 @@
 
 @implementation LocationViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.navigationController.navigationBar.barTintColor = NavBarColor;
@@ -32,13 +34,15 @@
     [self startNet];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 #pragma mark Net
-- (void)startNet {
+- (void)startNet
+{
     [ProgressHUD showText:@"获取中...." Interaction:YES Hide:NO];
     __weak typeof(self) wself = self;
     [HomePageNetwork getProvinceListWithSuccessBlock:^(NSArray *provinceArr)
@@ -54,7 +58,8 @@
 }
 
 #pragma mark - UITableViewDataSource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return 3+self.cityListFromServer.count;
 }
 
@@ -66,13 +71,15 @@
     }
     if (row == 0 || row == 2) {
         cell.backgroundColor = [UIColor lightGrayColor];
-        cell.textLabel.text = row==0?@"GPS定位城市：":@"已开通服务的城市：";
+        cell.textLabel.text = row==0?@"GPS定位城市:":@"已开通服务的省份:";
     }
-    else if (row == 1) {
+    else if (row == 1)
+    {
         cell.backgroundColor = [UIColor whiteColor];
         cell.textLabel.text = self.locatedCity;
     }
-    else {
+    else
+    {
         cell.backgroundColor = [UIColor whiteColor];
         cell.textLabel.text = ((ProvinceBean*)[self.cityListFromServer objectAtIndex:row-3]).provinceName;
     }
@@ -81,21 +88,34 @@
 }
 
 #pragma mark - UITableViewDelegate
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     return (indexPath.row==0||indexPath.row==2)?32:44;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if (!cell.textLabel.text || [cell.textLabel.text isEqualToString:@""] || indexPath.row == 0 || indexPath.row == 2) {
+    if (!cell.textLabel.text || [cell.textLabel.text isEqualToString:@""] || indexPath.row == 0 || indexPath.row == 2)
+    {
         return;
     }
-    [self.controller updatePositionBtnTitle:cell.textLabel.text];
-    [self pressedBack];
+    //[self.controller updatePositionBtnTitle:cell.textLabel.text];
+    //[self pressedBack];
+    
+    CityViewController *l = [[CityViewController alloc] init];
+    l.title = @"选择城市";
+    l.locatedCity = self.locatedCity;
+    l.Province = cell.textLabel.text;
+    l.controller = self.controller;
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:l];
+    [self presentViewController:nav animated:YES completion:nil];
+
 }
 
 #pragma mark - Button Response
-- (void)pressedBack {
+- (void)pressedBack
+{
     [ProgressHUD dismiss];
     [self dismissViewControllerAnimated:YES completion:nil];
 }

@@ -40,7 +40,8 @@ static NSString * const inputPlaceHold = @"说点什么";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     if (!User || !User.userID || [User.userID isEqualToString:@""]) {
-        if (self.hasShowLoginPage) {
+        if (self.hasShowLoginPage)
+        {
             [self.navigationController popToRootViewControllerAnimated:YES];
             return;
         }

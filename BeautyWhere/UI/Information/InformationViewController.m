@@ -11,11 +11,12 @@
 #import "BillPageNetwork.h"
 #import "BillDetailTableViewController.h"
 
-typedef NS_ENUM(NSInteger, InformationPageType) {
-    InformationPageTypeSeckill,
+typedef NS_ENUM(NSInteger, InformationPageType)
+{
+    InformationPageTypeShopping,
     InformationPageTypeLimitFactory,
     InformationPageTypeArround,
-    InformationPageTypeShopping
+    InformationPageTypeSeckill
 };
 
 @interface InformationViewController ()
@@ -46,8 +47,8 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
     // Do any additional setup after loading the view.
     self.edgesForExtendedLayout = UIRectEdgeNone;
     [self initializeVariable];
-    NSArray *views = @[self.seckillTable, self.limitFactoryTable, self.arroundTable];//, self.shoppingTable
-    NSArray *names = @[@"每日秒购",@"工厂直卖",@"附近美容"];//,@"裸价代购"
+    NSArray *views = @[self.shoppingTable, self.limitFactoryTable, self.arroundTable];//, self.shoppingTable
+    NSArray *names = @[@"爆款专区",@"工厂直卖",@"线下特惠"];//,@"裸价代购"
     XLScrollViewer *scroll =[XLScrollViewer scrollWithFrame:self.view.bounds withViews:views withButtonNames:names withThreeAnimation:221];
     scroll.xl_buttonColorNormal = [UIColor grayColor];
     scroll.xl_buttonColorSelected = [UIColor blackColor];
@@ -362,7 +363,8 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
 - (void)startNet {
     CheckGoodsOnSellsType sellsType = 0;
     NSString *currentPage = nil;
-    switch (self.pageType) {
+    switch (self.pageType)
+    {
         case InformationPageTypeArround:
             sellsType = CheckGoodsOnSellsTypeInStore;
             currentPage = [NSString stringWithFormat:@"%li",(long)self.arroundPageNum];
@@ -381,7 +383,8 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             break;
     }
     __weak typeof(self) wself = self;
-    [BillPageNetwork showOrderWithUserID:User.userID withType:sellsType withPageNum:currentPage withSucceedBlock:^(NSMutableArray *orderArr) {
+    [BillPageNetwork showOrderWithUserID:User.userID withType:sellsType withPageNum:currentPage withSucceedBlock:^(NSMutableArray *orderArr)
+    {
         CustomTableView *table = nil;
         NSMutableArray *currentArr = nil;
         switch (wself.pageType) {
@@ -419,6 +422,7 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
         [ProgressHUD dismiss];
     } withErrorBlock:^(NSError *err)
     {
+        //[GetAppDelegate RefreshTtoken];
         [ProgressHUD showText:@"获取失败，请保持网络通畅" Interaction:YES Hide:YES];
     }];
 }

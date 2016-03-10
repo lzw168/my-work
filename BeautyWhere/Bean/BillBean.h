@@ -87,6 +87,9 @@
 @property (nonatomic, strong)NSString *billScore;
 @property (nonatomic, strong)NSString *billLinkID;
 @property (nonatomic, assign)BOOL billHotenabled;
+@property (nonatomic, strong)NSString *express_id;
+@property (nonatomic, strong)NSString *express_name;
+@property (nonatomic, strong)NSString *express_no;
 
 - (instancetype)initWithDic:(NSDictionary *)dic;
 

@@ -16,17 +16,221 @@
 #import "KGModal.h"
 #import "StoreList.h"
 #import "CouponBean.h"
+#include "NSObject+SBJson.h"
+#import "ConfigBean.h"
+#import "CityBean.h"
+#include "GoodBean.h"
+#include "IntegralTableViewController.h"
 
 @implementation HomePageNetwork
 
 + (void)getProvinceListWithSuccessBlock:(void(^)(NSArray *provinceArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
 {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ProviceList] withParamDic:nil withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSArray class]]) {
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ProviceList] withParamDic:nil withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+         
+        if (ret == 0)
+        {
+            __block NSMutableArray *result = [[NSMutableArray alloc] init];
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            {
+                [result addObject:[[ProvinceBean alloc] initWithDic:obj]];
+                if (idx == dataArray.count-1)
+                {
+                    successBlock(result);
+                }
+            }];
+            if (dataArray.count==0)
+            {
+                successBlock(nil);
+            }
+        }
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
+            NSError *err = [NSError errorWithDomain:@"获取列表后台返回数据格式有误" code:40000 userInfo:nil];
+            errBlock(err);
+        }
+    } withErrorBlock:^(NSError *err)
+    {
+        errBlock(err);
+    }];
+}
+
++ (void)getCityListWithSuccessBlock:(NSString *)province withSuccessBlock:(void(^)(NSArray *cityArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_GetCity] withParamDic:@{@"province":province} withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"citylist=====%@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+         
+         if (ret == 0)
+         {
+             __block NSMutableArray *result = [[NSMutableArray alloc] init];
+             [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+              {
+                  [result addObject:[[CityBean alloc] initWithDic:obj]];
+                  if (idx == dataArray.count-1)
+                  {
+                      successBlock(result);
+                  }
+              }];
+             if (dataArray.count==0)
+             {
+                 successBlock(nil);
+             }
+         }
+         else
+         {
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
+             NSError *err = [NSError errorWithDomain:@"获取列表后台返回数据格式有误" code:40000 userInfo:nil];
+             errBlock(err);
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         errBlock(err);
+     }];
+}
+
++ (void)showGoodsWithSuccessBlock:(NSString *)goodID withSuccessBlock:(void(^)(NSMutableDictionary*GoodsDic))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_showGoods] withParamDic:@{@"goods_id":goodID} withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"goodlist========%@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableDictionary *dataDic = [dictResponse objectForKey:@"data"];
+         
+         if (ret == 0)
+         {
+             /*__block NSMutableArray *result = [[NSMutableArray alloc] init];
+             [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+              {
+                  [result addObject:[[GoodBean alloc] initWithDic:obj]];
+                  if (idx == dataArray.count-1)
+                  {
+                      successBlock(result);
+                  }
+              }];
+             if (dataArray.count==0)
+             {
+                 successBlock(nil);
+             }*/
+             if ([dataDic isKindOfClass:[NSMutableDictionary class]])
+             {
+                 successBlock(dataDic);
+             }
+             else
+             {
+                 NSError *err = [NSError errorWithDomain:@"获取后台返回数据格式有误" code:40000 userInfo:nil];
+                 errBlock(err);
+             }
+
+         }
+         else
+         {
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
+             NSError *err = [NSError errorWithDomain:@"获取列表后台返回数据格式有误" code:40000 userInfo:nil];
+             errBlock(err);
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         errBlock(err);
+     }];
+}
+
++ (void)showGoodsWithActivity:(NSString *)goodID withSuccessBlock:(void(^)(NSMutableDictionary*GoodsDic))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_showGoods] withParamDic:@{@"activity_id":goodID} withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"goodlist========%@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableDictionary *dataDic = [dictResponse objectForKey:@"data"];
+         
+         if (ret == 0)
+         {
+             /*__block NSMutableArray *result = [[NSMutableArray alloc] init];
+              [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+              {
+              [result addObject:[[GoodBean alloc] initWithDic:obj]];
+              if (idx == dataArray.count-1)
+              {
+              successBlock(result);
+              }
+              }];
+              if (dataArray.count==0)
+              {
+              successBlock(nil);
+              }*/
+             if ([dataDic isKindOfClass:[NSMutableDictionary class]])
+             {
+                 successBlock(dataDic);
+             }
+             else
+             {
+                 NSError *err = [NSError errorWithDomain:@"获取后台返回数据格式有误" code:40000 userInfo:nil];
+                 errBlock(err);
+             }
+             
+         }
+         else
+         {
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
+             NSError *err = [NSError errorWithDomain:@"获取列表后台返回数据格式有误" code:40000 userInfo:nil];
+             errBlock(err);
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         errBlock(err);
+     }];
+}
+
+
++ (void)getInfoWithPageNum:(NSString *)pageNum withSuccessBlock:(void(^)(NSArray *infoArr))successBlock withErrBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_InfoList] withParamDic:@{@"page":pageNum} withSuccessBlock:^(id response)
+    {
+        if ([response isKindOfClass:[NSArray class]])
+        {
             __block NSMutableArray *result = [[NSMutableArray alloc] init];
             [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
             {
-                [result addObject:[[ProvinceBean alloc] initWithDic:obj]];
+                [result addObject:[[InfoBean alloc] initWithDic:obj]];
                 if (idx == ((NSArray*)response).count-1)
                 {
                     successBlock(result);
@@ -37,49 +241,41 @@
                 successBlock(nil);
             }
         }
-        else {
-            NSError *err = [NSError errorWithDomain:@"获取省份列表——后台返回数据格式有误" code:40000 userInfo:nil];
+        else
+        {
+            NSError *err = [NSError errorWithDomain:@"获取列表后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
-    } withErrorBlock:^(NSError *err) {
-        errBlock(err);
-    }];
-}
-
-+ (void)getInfoWithPageNum:(NSString *)pageNum withSuccessBlock:(void(^)(NSArray *infoArr))successBlock withErrBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_InfoList] withParamDic:@{@"pagenum":pageNum} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSArray class]]) {
-            __block NSMutableArray *result = [[NSMutableArray alloc] init];
-            [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                [result addObject:[[InfoBean alloc] initWithDic:obj]];
-                if (idx == ((NSArray*)response).count-1) {
-                    successBlock(result);
-                }
-            }];
-            if (((NSArray*)response).count==0) {
-                successBlock(nil);
-            }
-        }
-        else {
-            NSError *err = [NSError errorWithDomain:@"获取资讯列表——后台返回数据格式有误" code:40000 userInfo:nil];
-            errBlock(err);
-        }
-    } withErrorBlock:^(NSError *err) {
+    } withErrorBlock:^(NSError *err)
+    {
         errBlock(err);
     }];
 }
 
 + (void)getCouponInfoWithSuccessBlock:(void(^)(NSDictionary *couponArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
 {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_CouponInfo] withParamDic:nil withSuccessBlock:^(id response)
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_CouponInfo] withParamDic:nil withSuccessBlock:^(id response)
      {
          NSLog(@"response=================%@",response);
-         if ([response isKindOfClass:[NSDictionary class]])
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSDictionary *dataDic = [dictResponse objectForKey:@"data"];
+
+         if (ret == 0)
          {
-             successBlock(response);
+             successBlock(dataDic);
          }
          else
          {
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
              NSError *err = [NSError errorWithDomain:@"getCouponInfo——后台返回数据格式有误" code:40000 userInfo:nil];
              errBlock(err);
          }
@@ -105,8 +301,12 @@
 {
     [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_GetCoupon] withParamDic:@{@"user_id":userID, @"coupon_id":couponID} withSuccessBlock:^(id response)
     {
-        NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-        if ([result isEqualToString:@"\"already\""])
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString%@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+
+        if (ret == 2)
         {
             UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 265, 189)];
             contentView.backgroundColor = [UIColor whiteColor];
@@ -129,7 +329,7 @@
             successBlock(@"");
             //successBlock(@"你已经领取过52元的护理代金劵");
         }
-        else if ([result isEqualToString:@"\"success\""])
+        else if (ret == 0)
         {
             UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 265, 189)];
             contentView.backgroundColor = [UIColor whiteColor];
@@ -154,6 +354,13 @@
         }
         else
         {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             NSError *err = [NSError errorWithDomain:@"领取失败" code:40000 userInfo:nil];
             errBlock(err);
         }
@@ -164,7 +371,7 @@
 
 + (void)getLimitTimeToBuyListWithStartTime:(NSString *)startTime withLng:(NSString *)lng withLat:(NSString *)lat withCurrentPage:(NSString *)pageNum withSuccessBlock:(void (^)(NSMutableArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
 {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ShowSeckillList] withParamDic:@{@"start_time":startTime, @"lng":lng, @"lat":lat, @"pagenum":pageNum} withSuccessBlock:^(id response)
+    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ShowSeckillList] withParamDic:@{@"start_time":startTime, @"lng":lng, @"lat":lat, @"page":pageNum} withSuccessBlock:^(id response)
     {
         if ([response isKindOfClass:[NSDictionary class]] && [[response objectForKey:@"list"] isKindOfClass:[NSArray class]])
         {
@@ -190,13 +397,22 @@
     }];
 }
 
-+ (void)getShoppingInfoWithStartTime:(NSString *)startTime withPageNum:(NSString *)pageNum withSuccessBlock:(void (^)(NSMutableArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ShowShoppingList] withParamDic:@{@"start_time":startTime, @"pagenum":pageNum} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSDictionary class]] && [[response objectForKey:@"list"] isKindOfClass:[NSArray class]]) {
++ (void)getShoppingInfoWithStartTime:(NSString *)startTime withPageNum:(NSString *)pageNum withSuccessBlock:(void (^)(NSMutableArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_showActivity] withParamDic:@{@"start_time":startTime, @"page":pageNum,@"type":@"1"} withSuccessBlock:^(id response)
+    {
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString %@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+        
+        if (ret == 0)
+        {
             __block NSMutableArray *goodsBeanArr = [[NSMutableArray alloc] init];
-            [[response objectForKey:@"list"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            {
                 NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:obj];
-                [dic setObject:[response objectForKey:@"state"] forKey:@"state"];
                 GoodsBean *goods = [[GoodsBean alloc] initWithDic:dic];
                 [goodsBeanArr addObject:goods];
             }];
@@ -205,7 +421,15 @@
             }
             successBlock(goodsBeanArr);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             NSError *err = [NSError errorWithDomain:@"getShoppingInfo——后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
@@ -214,47 +438,82 @@
     }];
 }
 
-+ (void)getLimitFactoryInfoWithStartTime:(NSString *)startTime withPageNum:(NSString *)pageNum withSuccessBlock:(void (^)(NSMutableArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ShowLimitedEdition] withParamDic:@{@"start_time":startTime, @"pagenum":pageNum} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSDictionary class]] && [[response objectForKey:@"list"] isKindOfClass:[NSArray class]]) {
++ (void)getLimitFactoryInfoWithStartTime:(NSString *)startTime withPageNum:(NSString *)pageNum withSuccessBlock:(void (^)(NSMutableArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_showActivity] withParamDic:@{@"start_time":startTime, @"page":pageNum,@"type":@"2"} withSuccessBlock:^(id response)
+    {
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString %@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+        
+        if (ret == 0)
+        {
             __block NSMutableArray *goodsBeanArr = [[NSMutableArray alloc] init];
-            [[response objectForKey:@"list"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            {
                 NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:obj];
-                [dic setObject:[response objectForKey:@"state"] forKey:@"state"];
                 GoodsBean *goods = [[GoodsBean alloc] initWithDic:dic];
                 [goodsBeanArr addObject:goods];
             }];
-            if (goodsBeanArr.count == 0) {
+            if (goodsBeanArr.count == 0)
+            {
                 goodsBeanArr = nil;
             }
             successBlock(goodsBeanArr);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
+            
             NSError *err = [NSError errorWithDomain:@"getLimitFactoryInfo——后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
-    } withErrorBlock:^(NSError *err) {
+    } withErrorBlock:^(NSError *err)
+     {
         errBlock(err);
     }];
 }
 
 + (void)getBusinessZoneWithCity:(NSString *)city withSuccessBlock:(void (^)(NSArray *storeArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_BussinessArea] withParamDic:@{@"city":city} withSuccessBlock:^(id response)
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_BussinessArea] withParamDic:@{@"city":city} withSuccessBlock:^(id response)
      {
-        if ([response isKindOfClass:[NSArray class]])
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSArray *dataArray = [dictResponse objectForKey:@"data"];
+         
+        if (ret == 0)
         {
             NSMutableArray *area = [[NSMutableArray alloc] init];
-            [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
             {
+                NSLog(@"name===========%@",[obj objectForKey:@"name"]);
                 [area addObject:[obj objectForKey:@"name"]];
             }];
             if (area.count == 0) {
                 area = nil;
             }
             successBlock(area);
-            NSLog(@"getBusinessZone response:%@",response);
+            NSLog(@"getBusinessZone response:%@",dataArray);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             NSError *err = [NSError errorWithDomain:@"getNearbyStore——后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
@@ -263,55 +522,94 @@
     }];
 }
 
-+ (void)getNearbyStoreWithUserID:(NSString *)userID withCity:(NSString *)city withDistrict:(NSString *)district withLng:(NSString *)lng withLat:(NSString *)lat withPageNum:(NSString *)pageNum withGroupID:(NSString *)groupID withTerm:(NSString *)term withSuccessBlock:(void (^)(NSArray *storeArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    NSMutableDictionary *paramDic = [[NSMutableDictionary alloc] initWithObjectsAndKeys:userID, @"user_id", city, @"city", lng, @"lng", lat, @"lat", pageNum, @"pagenum", nil];
-    if (groupID && ![groupID isEqualToString:@""]) {
++ (void)getNearbyStoreWithUserID:(NSString *)userID withCity:(NSString *)city withDistrict:(NSString *)district withLng:(NSString *)lng withLat:(NSString *)lat withPageNum:(NSString *)pageNum withGroupID:(NSString *)groupID withTerm:(NSString *)term withSuccessBlock:(void (^)(NSArray *storeArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    NSMutableDictionary *paramDic = [[NSMutableDictionary alloc] initWithObjectsAndKeys:userID, @"user_id", city, @"city", lng, @"lng", lat, @"lat", pageNum, @"page", nil];
+    if (groupID && ![groupID isEqualToString:@""])
+    {
         [paramDic setObject:groupID forKey:@"group_id"];
     }
-    if (term && ![term isEqualToString:@""]) {
-        [paramDic setObject:term forKey:@"term"];
+    if (term && ![term isEqualToString:@""])
+    {
+        [paramDic setObject:term forKey:@"filter_type"];
     }
     if (district && ![district isEqualToString:@""]) {
         [paramDic setObject:district forKey:@"district"];
     }
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_StoreList] withParamDic:paramDic withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSArray class]]) {
-            NSLog(@"getNearbyStore response:%@",response);
-            NSMutableArray *result = [[NSMutableArray alloc] init];
-            [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if ([obj isKindOfClass:[NSDictionary class]]) {
-                    StoreBean *store = [[StoreBean alloc] initWithDic:obj];
-                    [result addObject:store];
-                }
-            }];
-            if (result.count == 0) {
-                result = nil;
-            }
-            successBlock(result);
-        }
-        else {
-            NSError *err = [NSError errorWithDomain:@"getNearbyStore——后台返回数据格式有误" code:40000 userInfo:nil];
-            errBlock(err);
-        }
-    } withErrorBlock:^(NSError *err) {
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_StoreList] withParamDic:paramDic withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+         
+         if (ret == 0)
+         {
+             __block NSMutableArray *result = [[NSMutableArray alloc] init];
+             [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+              {
+                  if ([obj isKindOfClass:[NSDictionary class]])
+                  {
+                      StoreBean *store = [[StoreBean alloc] initWithDic:obj];
+                      [result addObject:store];
+                  }
+              }];
+             if (result.count == 0)
+             {
+                 result = nil;
+             }
+             successBlock(result);
+         }
+         else
+         {
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
+             NSError *err = [NSError errorWithDomain:@"getNearbyStore后台返回数据格式有误" code:40000 userInfo:nil];
+             errBlock(err);
+         }
+    } withErrorBlock:^(NSError *err)
+    {
         errBlock(err);
     }];
 }
 
-+ (void)sendStoreCommentWithUserID:(NSString *)userID withPartnerID:(NSString *)partnerID withStarMark:(NSString *)starMark withJiSuMark:(NSString *)jiSuMark withContent:(NSString *)content withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
++ (void)sendStoreCommentWithUserID:(NSString *)userID withPartnerID:(NSString *)partnerID withStarMark:(NSString *)starMark withJiSuMark:(NSString *)jiSuMark withContent:(NSString *)content withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
     NSMutableDictionary *paramDic = [[NSMutableDictionary alloc] initWithObjectsAndKeys:userID, @"user_id", partnerID, @"partner_id", content, @"content", nil];
-    if (starMark) {
+    if (starMark)
+    {
         [paramDic setObject:starMark forKey:@"star"];
     }
-    if (jiSuMark) {
-        [paramDic setObject:jiSuMark forKey:@"jisu"];
+    if (jiSuMark)
+    {
+        [paramDic setObject:jiSuMark forKey:@"tech"];
     }
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_WriteComment] withParamDic:paramDic withSuccessBlock:^(id response) {
-        NSString *responseStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-        if (responseStr && [responseStr isEqualToString:@"\"success\""]) {
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_WriteComment] withParamDic:paramDic withSuccessBlock:^(id response)
+    {
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString %@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        
+        if (ret == 0)
+        {
             successBlock(YES);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             successBlock(NO);
         }
     } withErrorBlock:^(NSError *err) {
@@ -319,13 +617,23 @@
     }];
 }
 
-+ (void)getStoreCommentWithPartnerID:(NSString *)partnerID withSuccessBlock:(void (^)(NSArray *commentArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ShowComment] withParamDic:@{@"partner_id":partnerID} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSArray class]]) {
-            NSLog(@"getStoreCommen response:%@",response);
++ (void)getStoreCommentWithPartnerID:(NSString *)partnerID withSuccessBlock:(void (^)(NSArray *commentArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_ShowComment] withParamDic:@{@"partner_id":partnerID} withSuccessBlock:^(id response){
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString %@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+        
+        if (ret == 0)
+        {
+            NSLog(@"getStoreCommen response:%@",dataArray);
             NSMutableArray *result = [[NSMutableArray alloc] init];
-            [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if ([obj isKindOfClass:[NSDictionary class]]) {
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            {
+                if ([obj isKindOfClass:[NSDictionary class]])
+                {
                     CommentBean *store = [[CommentBean alloc] initWithDic:obj];
                     [result addObject:store];
                 }
@@ -335,22 +643,42 @@
             }
             successBlock(result);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             NSError *err = [NSError errorWithDomain:@"getStoreCommen——后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
-    } withErrorBlock:^(NSError *err) {
+    } withErrorBlock:^(NSError *err)
+     {
         errBlock(err);
     }];
 }
 
-+ (void)getGoodsInStoreDetailPageWithPartnerID:(NSString *)partnerID withSuccessBlock:(void (^)(NSArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_GoodsInStore] withParamDic:@{@"partner_id":partnerID} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSArray class]]) {
++ (void)getGoodsInStoreDetailPageWithPartnerID:(NSString *)partnerID withSuccessBlock:(void (^)(NSArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_GoodsInStore] withParamDic:@{@"partner_id":partnerID} withSuccessBlock:^(id response)
+    {
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString %@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+
+        if (ret == 0)
+        {
             NSLog(@"getStoreCommen response:%@",response);
             NSMutableArray *result = [[NSMutableArray alloc] init];
-            [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if ([obj isKindOfClass:[NSDictionary class]]) {
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            {
+                if ([obj isKindOfClass:[NSDictionary class]])
+                {
                     GoodsBean *store = [[GoodsBean alloc] initWithDic:obj];
                     [result addObject:store];
                 }
@@ -360,7 +688,15 @@
             }
             successBlock(result);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             NSError *err = [NSError errorWithDomain:@"getStoreCommen——后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
@@ -370,73 +706,179 @@
 }
 
 + (void)collectStoreWithUserID:(NSString *)userID withPartnerID:(NSString *)partnerID withType:(NSString *)collectOrNot withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_CollectStore] withParamDic:@{@"user_id":userID, @"partner_id":partnerID, @"type":collectOrNot} withSuccessBlock:^(id response) {
-        NSString *responseStr = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-        if (responseStr && [responseStr isEqualToString:@"\"success\""]) {
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_CollectStore] withParamDic:@{@"user_id":userID, @"partner_id":partnerID, @"type":collectOrNot} withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         
+        if (ret == 0)
+        {
             successBlock(YES);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             successBlock(NO);
         }
-    } withErrorBlock:^(NSError *err) {
+    } withErrorBlock:^(NSError *err)
+    {
         errBlock(err);
     }];
 }
 
-+ (void)checkGoodsOnSellOrNotWithGoodsID:(NSString *)goodsID withType:(CheckGoodsOnSellsType)type withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock {
-    NSString *netRequestComponent = nil;
-    switch (type) {
++ (void)checkGoodsOnSellOrNotWithGoodsID:(NSString *)goodsID withType:(CheckGoodsOnSellsType)type
+                        withGoodsNum:(NSString *)goodsNum withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    switch (type)
+    {
         case CheckGoodsOnSellsTypeInStore:
-            netRequestComponent = nil;
+        {
+            if(GetAppDelegate.addressid == nil)
+            {
+                GetAppDelegate.addressid = @"";
+            }
+            [HomePageNetwork GetNewOrder:goodsID withUserId:GetAppDelegate.user.userID withActivityId:@"0" withAddressID:GetAppDelegate.addressid withgoodsnum:goodsNum withSuccessBlock:^(NSString *message)
+             {
+                 NSLog(@"message===============%@",message);
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 if ([message isEqualToString:@"臭美币不足"])
+                 {
+                     successBlock(YES);
+                 }
+             } withErrBlock:^(NSError *err)
+             {
+                 [ProgressHUD showText:@"购买失败" Interaction:YES Hide:YES];
+             }];
+
+        }
             break;
         case CheckGoodsOnSellsTypeLimitToFactory:
-            netRequestComponent = Server_BuyLimitedEdition;
-            break;
-        case CheckGoodsOnSellsTypeSeckill:
-            netRequestComponent = Server_BuySeckill;
+        {
+            if(GetAppDelegate.addressid == nil)
+            {
+                GetAppDelegate.addressid = @"";
+            }
+            [HomePageNetwork GetNewOrder:@"" withUserId:GetAppDelegate.user.userID withActivityId:goodsID withAddressID:GetAppDelegate.addressid withgoodsnum:goodsNum withSuccessBlock:^(NSString *message)
+             {
+                 NSLog(@"message===============%@",message);
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 if ([message isEqualToString:@"臭美币不足"])
+                 {
+                     successBlock(YES);
+                 }
+             } withErrBlock:^(NSError *err)
+             {
+                 [ProgressHUD showText:@"购买失败" Interaction:YES Hide:YES];
+             }];
+
+        }
             break;
         case CheckGoodsOnSellsTypeShopping:
-            netRequestComponent = Server_BuyShopping;
+        {
+            if(GetAppDelegate.addressid == nil)
+            {
+                GetAppDelegate.addressid = @"";
+            }
+            [HomePageNetwork GetNewOrder:@"" withUserId:GetAppDelegate.user.userID withActivityId:goodsID withAddressID:GetAppDelegate.addressid withgoodsnum:goodsNum withSuccessBlock:^(NSString *message)
+             {
+                 NSLog(@"message===============%@",message);
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 if ([message isEqualToString:@"臭美币不足"])
+                 {
+                     successBlock(YES);
+                 }
+             } withErrBlock:^(NSError *err)
+             {
+                 [ProgressHUD showText:@"购买失败" Interaction:YES Hide:YES];
+             }];
+
+        }
             break;
     }
-    if (type == CheckGoodsOnSellsTypeInStore) {
+    
+    /*if (type == CheckGoodsOnSellsTypeInStore)
+    {
         successBlock(YES);
     }
-    else {
-        [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, netRequestComponent] withParamDic:@{@"goods_id":goodsID} withSuccessBlock:^(id response) {
+    else
+    {
+        [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_NewOrder] withParamDic:@{@"good_id":goodsID} withSuccessBlock:^(id response)
+        {
             NSLog(@"response:%@",response);
-            if ([response isKindOfClass:[NSDictionary class]]) {
-                BOOL canBuy = [[response valueNull2NilForKey:@"canbuy"] boolValue];
-                successBlock(canBuy);
+            
+            NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+            NSLog(@"responseString %@",responseString);
+            NSMutableDictionary *dictResponse=[responseString JSONValue];
+            int ret = [[dictResponse objectForKey:@"ret"]intValue];
+            
+            if (ret == 0)
+            {
+                //BOOL canBuy = [[response valueNull2NilForKey:@"canbuy"] boolValue];
+                successBlock(YES);
             }
-            else {
+            else
+            {
+                if (ret== 1000)
+                {
+                    NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                    [ProgressHUD showText:message Interaction:YES Hide:YES];
+                    [GetAppDelegate Refreshtoken];
+                    return;
+                }
+                
                 NSError *err = [NSError errorWithDomain:@"checkGoodsOnSellOrNotWithGoodsID——后台返回数据格式有误" code:40000 userInfo:nil];
                 errBlock(err);
             }
-        } withErrorBlock:^(NSError *err) {
+        } withErrorBlock:^(NSError *err)
+        {
             errBlock(err);
         }];
-    }
+    }*/
 }
 
 + (void)getPingPPChargeWithGoodsID:(NSString *)goodsID withGoodsType:(NSString *)goodsType withUserID:(NSString *)userID withPartnerID:(NSString *)partnerID withAmount:(NSString *)amount withSubject:(NSString *)subject withMobile:(NSString *)mobile withChannel:(NSString *)channel withBody:(NSString *)body withSuccessBlock:(void (^)(NSDictionary *pingPPCharge))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
 {
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_OrderPay] withParamDic:@{@"goods_id":goodsID, @"goods_type":goodsType, @"user_id":userID, @"partner_id":partnerID, @"amount":amount, @"subject":subject, @"mobile":mobile, @"channel":channel, @"body":body} withSuccessBlock:^(id response) {
-//        NSLog(@"pingPPCharge:%@",response);
-        if ([response isKindOfClass:[NSData class]] && ((NSData*)response).length>0) {
-            NSError *err = nil;
-            NSDictionary *result = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&err];
-            if (!err) {
-                successBlock(result);
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_OrderPay] withParamDic:@{@"goods_id":goodsID, @"goods_type":goodsType, @"user_id":userID, @"partner_id":partnerID, @"amount":amount, @"subject":subject, @"mobile":mobile, @"channel":channel, @"body":body} withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString----88%@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSString * dataStr = [dictResponse objectForKey:@"data"];
+         NSMutableDictionary * dataDic = [dataStr JSONValue];
+         NSLog(@"dataDic===========%@",dataDic);
+         
+        if (ret == 0)
+        {
+            if (dataDic)
+            {
+                successBlock(dataDic);
             }
-            else {
+            else
+            {
                 successBlock(nil);
             }
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                return;
+            }
             successBlock(nil);
         }
-    } withErrorBlock:^(NSError *err) {
+    } withErrorBlock:^(NSError *err)
+    {
         errBlock(err);
     }];
 }
@@ -444,13 +886,19 @@
 /*-----增加获取分店列表功能*/
 + (void)getStoreListPageWithPartnerID:(NSString *)partnerID withSuccessBlock:(void (^)(NSArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
 {
-    [NetworkEngine postWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_Sub] withParamDic:@{@"partner_id":partnerID} withSuccessBlock:^(id response)
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_Sub] withParamDic:@{@"partner_id":partnerID} withSuccessBlock:^(id response)
      {
-        if ([response isKindOfClass:[NSArray class]])
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableArray *dataArray = [dictResponse objectForKey:@"data"];
+
+        if (ret == 0)
         {
             NSLog(@"getStoreList response:%@",response);
             NSMutableArray *result = [[NSMutableArray alloc] init];
-            [response enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+            [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
             {
                 if ([obj isKindOfClass:[NSDictionary class]])
                 {
@@ -466,6 +914,14 @@
         }
         else
         {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
+            
             NSError *err = [NSError errorWithDomain:@"getStoreCommen——后台返回数据格式有误" code:40000 userInfo:nil];
             errBlock(err);
         }
@@ -475,22 +931,67 @@
     }];
 }
 
-+(void)GetNewOrder:(NSString *)goodsID withUserId:(NSString *)userID withGoodsType:(NSString *)goodsType withSuccessBlock:(void(^)(NSString *message))successBlock withErrBlock:(void(^)(NSError *err))errBlock
++(void)GetNewOrder:(NSString *)goodsID withUserId:(NSString *)userID withActivityId:(NSString *)activityID withAddressID:(NSString *)addressID withgoodsnum:(NSString *)goodsNum withSuccessBlock:(void(^)(NSString *message))successBlock withErrBlock:(void(^)(NSError *err))errBlock
 {
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_NewOrder] withParamDic:@{@"user_id":userID, @"goods_id":goodsID,@"goods_type":goodsType} withSuccessBlock:^(id response)
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_NewOrder] withParamDic:@{@"user_id":userID, @"goods_id":goodsID,@"activity_id":activityID,@"address_id":addressID,@"goods_num":goodsNum} withSuccessBlock:^(id response)
      {
-         NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-         if ([result isEqualToString:@"\"success\""])
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        
+         if (ret == 0)
          {
-             successBlock(@"充值成功");
+             successBlock(@"购买成功");
          }
          else
          {
-             successBlock(@"充值失败");
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
+             NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+             successBlock(message);
          }
      }withErrorBlock:^(NSError *err)
     {
         errBlock(err);
     }];
 }
+
++ (void)GetConfigInfo:(void(^)(NSMutableDictionary *ConfigDic))successBlock withErrorBlock:(void(^)(NSError *err))errBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_Config] withParamDic:nil withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString %@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableDictionary *dataDic = [dictResponse objectForKey:@"data"];
+         
+         if (ret == 0)
+         {
+            successBlock(dataDic);
+         }
+         else
+         {
+             if (ret== 1000)
+             {
+                 NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                 [ProgressHUD showText:message Interaction:YES Hide:YES];
+                 [GetAppDelegate Refreshtoken];
+                 return;
+             }
+             NSError *err = [NSError errorWithDomain:@"获取配置信息——后台返回数据格式有误" code:40000 userInfo:nil];
+             errBlock(err);
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         errBlock(err);
+     }];
+}
+
 @end

@@ -70,9 +70,13 @@
         NSString *couponID = [couponArrList valueNull2NilForKey:@"id"];
         NSString *couponimage = [couponArrList valueNull2NilForKey:@"image"];
         NSString *couponcredit = [couponArrList valueNull2NilForKey:@"credit"];
+        NSLog(@"couponcredit--------------%f",(double)[couponcredit integerValue]/100.00);
+        float money = (double)[couponcredit integerValue]/100.00;
+        NSLog(@"money--------------%f",money);
+        NSString *couponmoney = [NSString stringWithFormat:@"%0.1f",money];
         if (couponID && ![couponID isEqualToString:@""])
         {
-            [HomePageNetwork getCouponWithUserID:User.userID withCouponID:couponID withCouponImage:couponimage withCouponPrice:couponcredit withSuccessBlock:^(NSString *message)
+            [HomePageNetwork getCouponWithUserID:User.userID withCouponID:couponID withCouponImage:couponimage withCouponPrice:couponmoney withSuccessBlock:^(NSString *message)
             {
                 NSLog(@"message===============%@",message);
                 [ProgressHUD showText:message Interaction:YES Hide:YES];
@@ -109,7 +113,7 @@
         UIImage *openImg = [UIImage imageNamed:@"hongbao-btn.png"];
         UIButton *open = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, openImg.size.width, openImg.size.height)];
         open.center = CGPointMake(_redPacket.frame.size.width/2, _redPacket.frame.size.height/2);
-        [open setTitle:@"猜红包" forState:UIControlStateNormal];
+        [open setTitle:@"拆红包" forState:UIControlStateNormal];
         open.titleLabel.font = [UIFont systemFontOfSize:13];
         [open setTitleColor:[UIColor colorWithRed:164.0/255.0 green:14.0/255.0 blue:39.0/255.0 alpha:1.0] forState:UIControlStateNormal];
         [open setBackgroundImage:openImg forState:UIControlStateNormal];

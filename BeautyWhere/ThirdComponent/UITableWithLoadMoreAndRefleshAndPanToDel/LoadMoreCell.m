@@ -34,10 +34,13 @@
 {
 //    NSLog(@"LoadMoreCell layoutSubviews frame:%@",NSStringFromCGRect(self.frame));
 //    NSLog(@"LoadMoreCell contentView subviews:%@",self.contentView.subviews);
-    for (id item in self.contentView.subviews) {
-        if ([item isKindOfClass:[UILabel class]]) {
+    for (id item in self.contentView.subviews)
+    {
+        if ([item isKindOfClass:[UILabel class]])
+        {
             UILabel *obj = (UILabel*)item;
-            if ([obj.text isEqualToString:@"点击加载更多"]) {
+            if ([obj.text isEqualToString:@"点击加载更多"])
+            {
                 obj.frame = CGRectMake((ScreenWidth-obj.frame.size.width)/2, obj.frame.origin.y, obj.frame.size.width, obj.frame.size.height);
             }
             break;

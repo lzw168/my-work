@@ -6,11 +6,12 @@
 //  Copyright (c) 2015年 Michael. All rights reserved.
 //
 
-typedef NS_ENUM(NSInteger, CheckGoodsOnSellsType) {
-    CheckGoodsOnSellsTypeSeckill,
-    CheckGoodsOnSellsTypeShopping,
+typedef NS_ENUM(NSInteger, CheckGoodsOnSellsType)
+{
+    CheckGoodsOnSellsTypeInStore,
     CheckGoodsOnSellsTypeLimitToFactory,
-    CheckGoodsOnSellsTypeInStore
+    CheckGoodsOnSellsTypeShopping,
+    CheckGoodsOnSellsTypeSeckill
 };
 
 #import <Foundation/Foundation.h>
@@ -18,6 +19,12 @@ typedef NS_ENUM(NSInteger, CheckGoodsOnSellsType) {
 @interface HomePageNetwork : NSObject
 
 + (void)getProvinceListWithSuccessBlock:(void(^)(NSArray *provinceArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
+
++ (void)getCityListWithSuccessBlock:(NSString *)province withSuccessBlock:(void(^)(NSArray *cityArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
+
++ (void)showGoodsWithSuccessBlock:(NSString *)goodID withSuccessBlock:(void(^)(NSMutableDictionary *GoodsDic))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
+
++ (void)showGoodsWithActivity:(NSString *)goodID withSuccessBlock:(void(^)(NSMutableDictionary *GoodsDic))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
 
 + (void)getInfoWithPageNum:(NSString *)pageNum withSuccessBlock:(void(^)(NSArray *infoArr))successBlock withErrBlock:(void(^)(NSError *err))errBlock;
 
@@ -43,11 +50,13 @@ typedef NS_ENUM(NSInteger, CheckGoodsOnSellsType) {
 
 + (void)collectStoreWithUserID:(NSString *)userID withPartnerID:(NSString *)partnerID withType:(NSString *)collectOrNot withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
 
-+ (void)checkGoodsOnSellOrNotWithGoodsID:(NSString *)goodsID withType:(CheckGoodsOnSellsType)type withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
++ (void)checkGoodsOnSellOrNotWithGoodsID:(NSString *)goodsID withType:(CheckGoodsOnSellsType)type withGoodsNum:(NSString *)goodsNum withSuccessBlock:(void (^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
 
 + (void)getPingPPChargeWithGoodsID:(NSString *)goodsID withGoodsType:(NSString *)goodsType withUserID:(NSString *)userID withPartnerID:(NSString *)partnerID withAmount:(NSString *)amount withSubject:(NSString *)subject withMobile:(NSString *)mobile withChannel:(NSString *)channel withBody:(NSString *)body withSuccessBlock:(void (^)(NSDictionary *pingPPCharge))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
 
 + (void)getStoreListPageWithPartnerID:(NSString *)partnerID withSuccessBlock:(void (^)(NSArray *goodsArr))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
 
-+(void)GetNewOrder:(NSString *)goodsID withUserId:(NSString *)userID withGoodsType:(NSString *)goodsType withSuccessBlock:(void(^)(NSString *message))successBlock withErrBlock:(void(^)(NSError *err))errBlock;
++(void)GetNewOrder:(NSString *)goodsID withUserId:(NSString *)userID withActivityId:(NSString *)activityID withAddressID:(NSString *)addressID withgoodsnum:(NSString *)goodsNum withSuccessBlock:(void(^)(NSString *message))successBlock withErrBlock:(void(^)(NSError *err))errBlock;
+
++(void)GetConfigInfo:(void(^)(NSMutableDictionary *ConfigDic))successBlock withErrorBlock:(void(^)(NSError *err))errBlock;
 @end

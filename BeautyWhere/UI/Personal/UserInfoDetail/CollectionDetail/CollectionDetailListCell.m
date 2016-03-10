@@ -17,8 +17,10 @@
 
 @implementation CollectionDetailListCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier withStoreBean:(StoreBean *)store withCellHeight:(CGFloat)cellHeight {
-    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier withStoreBean:(StoreBean *)store withCellHeight:(CGFloat)cellHeight
+{
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])
+    {
         self.cellHeight = cellHeight;
         self.store = store;
         [self customCell];
@@ -26,14 +28,16 @@
     return self;
 }
 
--(void)customCell {
+-(void)customCell
+{
     UIImageView *imgView = (UIImageView *)[self.moveContentView viewWithTag:collectionDetailIconTag];
-    if (!imgView) {
+    if (!imgView)
+    {
         imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, self.cellHeight-20, self.cellHeight-20)];
         imgView.tag = collectionDetailIconTag;
         [self.moveContentView addSubview:imgView];
     }
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.store.storeImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.store.storeImageThumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     
     UILabel *title = (UILabel *)[self.moveContentView viewWithTag:collectionDetailNameTag];
     if (!title) {

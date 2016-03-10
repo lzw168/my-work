@@ -30,22 +30,27 @@
     return self;
 }
 
--(void)customCell {
+-(void)customCell
+{
     UIImageView *imgView = (UIImageView *)[self.moveContentView viewWithTag:limitTimeIconTag];
-    if (!imgView) {
+    if (!imgView)
+    {
         imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, self.cellHeight-20, self.cellHeight-20)];
         imgView.tag = limitTimeIconTag;
         [self.moveContentView addSubview:imgView];
     }
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.goodsImgLastComponentURL]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.self.img_thumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     
     UILabel *title = (UILabel *)[self.moveContentView viewWithTag:limitTimeGoodsNameTag];
-    if (!title) {
+    if (!title)
+    {
         title = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
         title.tag = limitTimeGoodsNameTag;
         [self.moveContentView addSubview:title];
     }
     title.text = self.infoBean.goodsName;
+    [title setFont:[UIFont systemFontOfSize:13.0]];
     
     UILabel *originalPrice = (UILabel *)[self.moveContentView viewWithTag:limitTimeOriginalPriceTag];
     if (!originalPrice) {
@@ -63,7 +68,8 @@
         stock.tag = limitTimeStockTag;
         [self.moveContentView addSubview:stock];
     }
-    stock.text = [NSString stringWithFormat:@"库存：%@",self.infoBean.goodsTotalNum];
+    stock.text = [NSString stringWithFormat:@"库存:%@",self.infoBean.goodsTotalNum];
+    [stock setFont:[UIFont systemFontOfSize:13.0]];
     
     UILabel *nowPrice = (UILabel *)[self.moveContentView viewWithTag:limitTimeNowPriceTag];
     if (!nowPrice) {
@@ -73,13 +79,14 @@
         nowPrice.font = [UIFont systemFontOfSize:16];
         [self.moveContentView addSubview:nowPrice];
     }
-    switch (self.pageType) {
+    switch (self.pageType)
+    {
         case PageTypeLimitFactory:
         case PageTypeSecKill:
-            nowPrice.text = [NSString stringWithFormat:@"现价￥%@",self.infoBean.goodsSecKillPrice];
+            nowPrice.text = [NSString stringWithFormat:@"现价￥%@",self.infoBean.activity_price];
             break;
         case PageTypeShopping:
-            nowPrice.text = [NSString stringWithFormat:@"现价￥%@",self.infoBean.goodsLuoJiaPrice];
+            nowPrice.text = [NSString stringWithFormat:@"现价￥%@",self.infoBean.activity_price];
             break;
     }
     [nowPrice sizeToFit];
@@ -104,6 +111,7 @@
         seckillState.text = @"立即抢购";
     }
     [seckillState sizeToFit];
+    [seckillState setFont:[UIFont systemFontOfSize:13.0]];
     seckillState.frame = CGRectMake(ScreenWidth-10-seckillState.frame.size.width, self.cellHeight-seckillState.frame.size.height-10, seckillState.frame.size.width, seckillState.frame.size.height);
     
     [self.contentView.gestureRecognizers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)

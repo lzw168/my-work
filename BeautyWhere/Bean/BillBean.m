@@ -21,7 +21,7 @@
         self.billCardID = [dic valueNull2NilForKey:@"card_id"];
         self.billGoodsID = [dic valueNull2NilForKey:@"goods_id"];
         self.billOrderID = [dic valueNull2NilForKey:@"order_id"];
-        self.billGoodsType = [dic valueNull2NilForKey:@"goods_type"];
+        self.billGoodsType = [dic valueNull2NilForKey:@"category"];
         self.billState = [dic valueNull2NilForKey:@"state"];
         self.billTradeNum = [dic valueNull2NilForKey:@"trade_no"];
         self.billAllowRefund = [[dic valueNull2NilForKey:@"allowrefund"] boolValue];
@@ -61,7 +61,7 @@
         self.billCityPlaceRegion = [dic valueNull2NilForKey:@"city_place_region"];
         self.billCityPlaceStreet = [dic valueNull2NilForKey:@"city_place_street"];
         self.billPrice = [dic valueNull2NilForKey:@"price"];
-        self.billNowPrice = [dic valueNull2NilForKey:@"nowprice"];
+        self.billNowPrice = [dic valueNull2NilForKey:@"goods_price"];
         self.billFundPrice = [dic valueNull2NilForKey:@"fundprice"];
         self.billImgURLLaxtComponent = [dic valueNull2NilForKey:@"img"];
         self.billIntro = [dic valueNull2NilForKey:@"intro"];
@@ -88,6 +88,9 @@
         self.billScore = [dic valueNull2NilForKey:@"score"];
         self.billLinkID = [dic valueNull2NilForKey:@"linkid"];
         self.billHotenabled = [[dic valueNull2NilForKey:@"hotenabled"] boolValue];
+        self.express_id = [dic valueNull2NilForKey:@"express_id"];
+        self.express_name = [dic valueNull2NilForKey:@"express_name"];
+        self.express_no = [dic valueNull2NilForKey:@"express_no"];
     }
     return self;
 }

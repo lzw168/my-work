@@ -6,10 +6,12 @@
 //  Copyright (c) 2015年 Michael. All rights reserved.
 //
 
-typedef NS_ENUM(NSInteger, PageType) {
-    PageTypeSecKill,
+typedef NS_ENUM(NSInteger, PageType)
+{
+    PageTypeInStore,
     PageTypeLimitFactory,
-    PageTypeShopping
+    PageTypeShopping,
+    PageTypeSecKill
 };
 
 #import <UIKit/UIKit.h>

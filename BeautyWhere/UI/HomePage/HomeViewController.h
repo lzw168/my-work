@@ -17,5 +17,6 @@
 >
 
 - (void)updatePositionBtnTitle:(NSString *)position;
-
+- (void)showGoods:(NSString *)GoodId;
+- (void)showGoodsWithActivity:(NSString *)ActivityId;
 @end

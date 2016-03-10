@@ -10,6 +10,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "PayBillTableViewController.h"
 #import "Pingpp.h"
+#import "MorePageNetwork.h"
 
 @interface RechargeTableViewController ()
 
@@ -29,9 +30,41 @@
     [self.tableView setScrollEnabled:NO];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [MorePageNetwork refleshUserInfoWithUserID:User.userID withSuccessBlock:^(BOOL finished)
+     {
+         if (!finished)
+         {
+             NSLog(@"获取不了新用户信息的json数据");
+         }
+         else
+         {
+             //[ProgressHUD showText:@"臭美币更新成功" Interaction:YES Hide:YES];
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         NSLog(@"更新用户信息有误:%@",err);
+         NSError *error = nil;
+         BOOL removeFinished;
+         removeFinished = [[NSFileManager defaultManager] removeItemAtPath:UserInfoFilePath error:&error];
+         if (error)
+         {
+             NSLog(@"删除用户信息文件有误:%@",error);
+         }
+         else if (removeFinished)
+         {
+             User = nil;
+         }
+         [ProgressHUD showText:@"获取不了新的用户数据，请重新登录" Interaction:YES Hide:YES];
+     }];
+}
+
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    //Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -275,7 +308,7 @@
         return;
     }
     
-    if ([self.price intValue]<=0)
+    if ([self.price floatValue]<=0)
     {
         [ProgressHUD showText:@"请输入的臭美币不正确" Interaction:YES Hide:YES];
         return;
@@ -283,7 +316,7 @@
     
     NSInteger fen = 0;
     NSString *sellType = @"";
-    fen = [self.price intValue]*100;
+    fen = [self.price floatValue]*100;
     NSString *payChannel = @"wx";
     NSString *mobile = [User.mobile integerValue]==0?@"0":User.mobile;
     [HomePageNetwork getPingPPChargeWithGoodsID:@"" withGoodsType:sellType withUserID:User.userID withPartnerID:@"" withAmount:[NSString stringWithFormat:@"%li",(long)fen] withSubject:@"" withMobile:mobile withChannel:payChannel withBody:@"" withSuccessBlock:^(NSDictionary *pingPPCharge)
@@ -291,19 +324,25 @@
          if (pingPPCharge)
          {
              GetAppDelegate.openURLHandlerViewController = self;
-             [Pingpp createPayment:pingPPCharge appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error) {
-                 if (error) {
+             [Pingpp createPayment:pingPPCharge appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error)
+             {
+                 if (error)
+                 {
                      [ProgressHUD showText:@"充值失败" Interaction:YES Hide:YES];
                  }
-                 else {
-                     [Pingpp createPayment:pingPPCharge viewController:self appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error) {
-                         if (error) {
+                 else
+                 {
+                     [Pingpp createPayment:pingPPCharge viewController:self appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error)
+                     {
+                         if (error)
+                         {
                              [ProgressHUD showText:@"充值失败" Interaction:YES Hide:YES];
                          }
                          else
                          {
                              [ProgressHUD showText:@"充值成功" Interaction:YES Hide:YES];
                              [self.navigationController popToRootViewControllerAnimated:YES];
+                             
                          }
                      }];
                  }
@@ -338,7 +377,7 @@
         return;
     }
     
-    if ([self.price intValue]<=0)
+    if ([self.price floatValue]<=0)
     {
         [ProgressHUD showText:@"请输入的臭美币不正确" Interaction:YES Hide:YES];
         return;
@@ -346,21 +385,27 @@
     
     NSInteger fen = 0;
     NSString *sellType = @"";
-    fen = [self.price intValue]*100;
+    fen = [self.price floatValue]*100;
     NSString *payChannel = @"alipay";
     NSString *mobile = [User.mobile integerValue]==0?@"0":User.mobile;
     [HomePageNetwork getPingPPChargeWithGoodsID:@"" withGoodsType:sellType withUserID:User.userID withPartnerID:@"" withAmount:[NSString stringWithFormat:@"%li",(long)fen] withSubject:@"" withMobile:mobile withChannel:payChannel withBody:@"" withSuccessBlock:^(NSDictionary *pingPPCharge)
      {
+         NSLog(@"pingPPCharge========%@",pingPPCharge);
          if (pingPPCharge)
          {
              GetAppDelegate.openURLHandlerViewController = self;
-             [Pingpp createPayment:pingPPCharge appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error) {
-                 if (error) {
+             [Pingpp createPayment:pingPPCharge appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error)
+             {
+                 if (error)
+                 {
                      [ProgressHUD showText:@"充值失败" Interaction:YES Hide:YES];
                  }
-                 else {
-                     [Pingpp createPayment:pingPPCharge viewController:self appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error) {
-                         if (error) {
+                 else
+                 {
+                     [Pingpp createPayment:pingPPCharge viewController:self appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error)
+                     {
+                         if (error)
+                         {
                              [ProgressHUD showText:@"充值失败" Interaction:YES Hide:YES];
                          }
                          else
@@ -421,7 +466,7 @@
 }
 
 #pragma mark - UITextViewDelegate
-- (void)textViewDidBeginEditing:(UITextView *)textView
+- (void)textFieldDidBeginEditing:(UITextField *)textView
 {
     if ([textView.text isEqualToString:self.price])
     {
@@ -430,7 +475,8 @@
     }
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView {
+- (void)textFieldDidEndEditing:(UITextField *)textView
+{
     if (textView.text.length < 1)
     {
         textView.text = self.price;
@@ -440,8 +486,40 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    //输入完成隐藏键盘
+    //输入完成隐藏键
+    self.price = textField.text;
+    NSString * desc = [NSString stringWithFormat:@"元 = %@个",self.price];
+    self.label.text = desc;
     [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)textFieldDidChange:(UITextField *)textField
+{
+    NSLog(@"======================000");
+    
+    if (textField == self.input)
+    {
+        if (textField.text.length > 5)
+        {
+            textField.text = [textField.text substringToIndex:5];
+        }
+    }
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textField == self.input)
+    {
+        if (textField.text.length > 5)
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+    }
     return YES;
 }
 

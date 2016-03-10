@@ -44,10 +44,12 @@ typedef NS_ENUM(NSInteger, PersonalPageType) {
     self.workTable = [[CustomTableView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, self.view.bounds.size.height-self.navigationController.navigationBar.frame.size.height-[UIApplication sharedApplication].statusBarFrame.size.height-44)];
     self.workTable.dataSource = self;
     self.workTable.delegate = self;
+    self.workTable.userInteractionEnabled = NO;
     self.workTable.homeTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.overdueTable = [[CustomTableView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, self.view.bounds.size.height-self.navigationController.navigationBar.frame.size.height-[UIApplication sharedApplication].statusBarFrame.size.height-44)];
     self.overdueTable.dataSource = self;
     self.overdueTable.delegate = self;
+    self.overdueTable.userInteractionEnabled = NO;
     self.overdueTable.homeTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     NSArray *views = @[self.workTable, self.overdueTable];
     NSArray *names = @[@"未使用",@"已失效"];
@@ -71,9 +73,10 @@ typedef NS_ENUM(NSInteger, PersonalPageType) {
 #pragma mark - Net
 - (void)startNet {
     __weak typeof(self) wself = self;
-    NSString *type = self.pageType == PersonalPageTypeWorkingCoupon?@"canuse":@"over";
+    NSString *type = self.pageType == PersonalPageTypeWorkingCoupon?@"1":@"0";
     NSString *pageNum = self.pageType == PersonalPageTypeWorkingCoupon?[NSString stringWithFormat:@"%li",(long)self.workPageNum]:[NSString stringWithFormat:@"%li",(long)self.overduePageNum];
-    [PersonalPageNetwork getMyCouponWithUserID:User.userID withType:type withPageNum:pageNum withSuccessBlock:^(NSArray *coupons) {
+    [PersonalPageNetwork getMyCouponWithUserID:User.userID withType:type withPageNum:pageNum withSuccessBlock:^(NSArray *coupons)
+     {
         __strong RefreshDataComplete refreshCompleteBlock = wself.refreshDataFinishedBlock;
         __strong LoadDataComplete loadMoreCompleteBlock = wself.loadDataFinishedBlock;
         NSMutableArray *targetArr = self.pageType == PersonalPageTypeWorkingCoupon?self.workInfosArr:self.overdueInfosArr;
@@ -90,8 +93,8 @@ typedef NS_ENUM(NSInteger, PersonalPageType) {
         if (loadMoreCompleteBlock && targetArr.count - originalCount > 0) {
             loadMoreCompleteBlock((int)(targetArr.count - originalCount));
         }
-        if (!refreshCompleteBlock && !loadMoreCompleteBlock) {
-//            [targetTable reloadTableViewDataSource];
+        if (!refreshCompleteBlock && !loadMoreCompleteBlock)
+        {
             [targetTable.homeTableView reloadData];
         }
         [ProgressHUD dismiss];
@@ -108,7 +111,7 @@ typedef NS_ENUM(NSInteger, PersonalPageType) {
 
 - (void)initliazeOverList {
     __weak typeof(self) wself = self;
-    [PersonalPageNetwork getMyCouponWithUserID:User.userID withType:@"over" withPageNum:@"1" withSuccessBlock:^(NSArray *coupons) {
+    [PersonalPageNetwork getMyCouponWithUserID:User.userID withType:@"0" withPageNum:@"1" withSuccessBlock:^(NSArray *coupons) {
         [wself.overdueInfosArr removeAllObjects];
         [wself.overdueInfosArr addObjectsFromArray:coupons];
     } withErrorBlock:^(NSError *err) {
@@ -183,8 +186,9 @@ typedef NS_ENUM(NSInteger, PersonalPageType) {
     return 90;
 }
 
--(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView {
-    ;
+-(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView
+{
+    return;
 }
 
 -(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView {
@@ -205,18 +209,21 @@ typedef NS_ENUM(NSInteger, PersonalPageType) {
 #pragma mark - XLScrollViewDelegate
 - (void)xlscrollviewChangeCurrentPageIndex:(NSInteger)currentPageIndex {
     self.pageType = currentPageIndex;
-    if (self.overdueInfosArr.count > 0 && [self.overdueTable.homeTableView visibleCells].count == 1) {
+    if (self.overdueInfosArr.count > 0 && [self.overdueTable.homeTableView visibleCells].count == 1)
+    {
         [self.overdueTable.homeTableView reloadData];
     }
 }
 
 #pragma mark - Button Response
-- (void)restartNet:(UIButton *)b {
+- (void)restartNet:(UIButton *)b
+{
     [b removeFromSuperview];
     [self startNet];
 }
 
-- (void)showNetErrorTip {
+- (void)showNetErrorTip
+{
     [ProgressHUD dismiss];
     UIButton *btn = [[UIButton alloc] initWithFrame:self.view.bounds];
     [btn setTitle:@"网络好像有点问题，点击屏幕重试吧~" forState:UIControlStateNormal];

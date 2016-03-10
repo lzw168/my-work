@@ -22,13 +22,15 @@
     UIWebView *provision = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height-44)];
     provision.delegate = self;
     [self.view addSubview:provision];
-    if (!self.urlStr) {
-        self.urlStr = @"http://shnm.vba8.com/Home/Index/showCommunity";
+    if (!self.urlStr)
+    {
+        self.urlStr = [NSString stringWithFormat:@"%@%@",Server_RequestHost, @"Index/showCommunity"];
     }
     [provision loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -44,11 +46,13 @@
 */
 
 #pragma mark - UIWebviewDelegate
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
     [ProgressHUD dismiss];
 }
 
-- (void)webView:(UIWebView *)webView didFailLoadWithError:(nullable NSError *)error {
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(nullable NSError *)error
+{
     [ProgressHUD showText:error.localizedFailureReason Interaction:YES Hide:YES];
 }
 

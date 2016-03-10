@@ -10,7 +10,7 @@
 #import "GoodsBean.h"
 #import "HomePageNetwork.h"
 
-@interface GoodsDetailTableViewController : UITableViewController
+@interface GoodsDetailTableViewController : UITableViewController<UIWebViewDelegate>
 
 @property (nonatomic, assign)CheckGoodsOnSellsType goodsOnSellsType;
 

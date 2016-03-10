@@ -70,7 +70,7 @@
             case 1:
             {
                 UIImageView *pic = [[UIImageView alloc] initWithFrame:CGRectMake(30, CellHeight-(ScreenWidth-60)*0.75, ScreenWidth-60, (ScreenWidth-60)*0.75)];
-                [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.infoImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+                [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.infoImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
                 pic.userInteractionEnabled = YES;
                 [cell.contentView addSubview:pic];
                 

@@ -13,5 +13,6 @@
 @interface NearbyStoreViewController : UIViewController <CustomTableViewDataSource,CustomTableViewDelegate,MXPullDownMenuDelegate>
 
 @property (nonatomic, strong) NSString *locatedCity;
+@property (nonatomic, strong) NSString * StoreType;
 
 @end

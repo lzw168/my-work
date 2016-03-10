@@ -43,8 +43,8 @@
     shuoview.frame = CGRectMake(0, 0, self.width, self.height);*/
     UIButton *btnCard = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     UIImageView *pic = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.width, self.height)];
-    NSLog(@"=======IMAGE=======%@%@",Server_ImgHost,image);
-    [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost,image]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    NSLog(@"=======IMAGE=======%@%@",GetAppDelegate.img_path,image);
+    [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path,image]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [btnCard setBackgroundImage:[pic image] forState:UIControlStateNormal];
     [btnCard setFrame:CGRectMake(2, 0, self.width, self.height)];
     //[shuoview addSubview:btnCard];

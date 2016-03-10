@@ -36,10 +36,9 @@
     NSLog(@"保存的城市===============%@",gameuseradd);
     
     NearbyStoreViewController *morePage = [[NearbyStoreViewController alloc] init];
-    morePage.title = @"附近美容";
+    morePage.title = @"线下网点";
     ((NearbyStoreViewController*)morePage).locatedCity = gameuseradd;
     GetAppDelegate.paySource = @"0";
-    
     morePage.hidesBottomBarWhenPushed = NO;
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
     morePage.edgesForExtendedLayout = UIRectEdgeNone;
@@ -73,7 +72,7 @@
                 navController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"臭美档案" image:[[UIImage imageNamed:@"tab-my-pre.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] selectedImage:[[UIImage imageNamed:@"tab-my.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
              break;
              case 3:
-                navController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"附近美容" image:[[UIImage imageNamed:@"tab-more-pre.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] selectedImage:[[UIImage imageNamed:@"tab-more.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+                navController.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"线下网点" image:[[UIImage imageNamed:@"tab-more-pre.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] selectedImage:[[UIImage imageNamed:@"tab-more.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
              break;
          }
         [navArr addObject:navController];
@@ -93,7 +92,7 @@
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"guide"])
     {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"guide"];
-        NSArray *guideImgNameArr = @[@"yindaoye-1.png", @"yindaoye-2.png", @"yindaoye-3.png", @"yindaoye-4.png"];
+        /*NSArray *guideImgNameArr = @[@"yindaoye-1.png", @"yindaoye-2.png", @"yindaoye-3.png", @"yindaoye-4.png"];
         UIScrollView *guide = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, ScreenHeight)];
         guide.pagingEnabled = YES;
         guide.contentSize = CGSizeMake(guideImgNameArr.count*ScreenWidth, ScreenHeight);
@@ -105,7 +104,27 @@
             [guide addSubview:imgView];
         }
         guide.delegate = self;
-        [self.view addSubview:guide];
+        [self.view addSubview:guide];*/
+        EAIntroPage *page1 = [EAIntroPage page];
+        page1.bgImage = [UIImage imageNamed:@"yindaoye-1"];
+        page1.titleImage = [UIImage imageNamed:@""];
+        
+        EAIntroPage *page2 = [EAIntroPage page];
+        page2.bgImage = [UIImage imageNamed:@"yindaoye-2"];
+        page2.titleImage = [UIImage imageNamed:@""];
+        
+        /*EAIntroPage *page3 = [EAIntroPage page];
+        page3.bgImage = [UIImage imageNamed:@"yindaoye-3"];
+        page3.titleImage = [UIImage imageNamed:@""];
+        
+        EAIntroPage *page4 = [EAIntroPage page];
+        page4.bgImage = [UIImage imageNamed:@"yindaoye-4"];
+        page4.titleImage = [UIImage imageNamed:@""];*/
+        
+        EAIntroView *intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1,page2]];
+        
+        [intro setDelegate:self];
+        [intro showInView:self.view animateDuration:0.0];
     }
 }
 

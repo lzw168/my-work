@@ -24,6 +24,7 @@
         self.commentScore = [dic valueNull2NilForKey:@"score"];
         self.commentAvatar = [dic valueNull2NilForKey:@"avatar"];
         self.commentUserName = [dic valueNull2NilForKey:@"username"];
+        self.commentNickName = [dic valueNull2NilForKey:@"nickname"];
     }
     return self;
 }

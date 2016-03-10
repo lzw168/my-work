@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSString *goodsSeckillState;//三个状态，early时间未到，late 超过时间，now 可以购买
 @property (nonatomic, strong) NSString *goodsID;//仅作识别用
+@property (nonatomic, strong) NSString *actID;
 @property (nonatomic, strong) NSString *goodsName;//商品名
 @property (nonatomic, strong) NSString *goodsPartnerID;//商店 ID
 @property (nonatomic, strong) NSString *goodsCity;
@@ -51,6 +52,11 @@
 @property (nonatomic, strong) NSString *goodsTitle;
 @property (nonatomic, assign) BOOL goodsCanBuy;
 @property (nonatomic, strong) NSString *goodsAddress;
+@property (nonatomic, strong) NSString *activity_price;
+@property (nonatomic, strong) NSString *img_thumb;
+@property (nonatomic, strong) NSString *goods_price;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *good_id;
 
 - (instancetype)initWithDic:(NSDictionary *)dic;
 

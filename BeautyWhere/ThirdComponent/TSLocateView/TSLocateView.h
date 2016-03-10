@@ -10,14 +10,16 @@
 #import <QuartzCore/QuartzCore.h>
 #import "TSLocation.h"
 
-@interface TSLocateView : UIActionSheet<UIPickerViewDelegate, UIPickerViewDataSource> {
-@private
+@interface TSLocateView : UIActionSheet<UIPickerViewDelegate, UIPickerViewDataSource>
+{
+    @private
     NSArray *provinces;
     NSArray	*cities;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UIPickerView *locatePicker;
+@property (strong, nonatomic) IBOutlet UIImageView * topimageview;
 @property (strong, nonatomic) TSLocation *locate;
 
 - (id)initWithTitle:(NSString *)title delegate:(id /*<UIActionSheetDelegate>*/)delegate;

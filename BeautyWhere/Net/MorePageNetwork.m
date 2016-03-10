@@ -7,6 +7,7 @@
 //
 
 #import "MorePageNetwork.h"
+#import "NSObject+SBJson.h"
 
 @implementation MorePageNetwork
 
@@ -24,20 +25,30 @@
     }];
 }
 
-+ (void)getCheckCodeWithPhoneNum:(NSString *)phoneNum withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock {
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_RequestMessageCode] withParamDic:@{@"phone":phoneNum} withSuccessBlock:^(id response) {
++ (void)getCheckCodeWithPhoneNum:(NSString *)phoneNum withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_RequestMessageCode] withParamDic:@{@"phone":phoneNum} withSuccessBlock:^(id response)
+    {
         NSLog(@"getCheckCodeWithPhoneNum response:%@",response);
-        if ([response isKindOfClass:[NSData class]])
+        NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+        NSLog(@"responseString %@",responseString);
+        NSMutableDictionary *dictResponse=[responseString JSONValue];
+        int ret = [[dictResponse objectForKey:@"ret"]intValue];
+        
+        if (ret == 0)
         {
-            NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-            if ([result isEqualToString:@"\"send\""]) {
-                successBlock(YES);
-            }
-            else {
-                successBlock(NO);
-            }
+           successBlock(YES);
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
+            successBlock(NO);
             NSError *err = [NSError errorWithDomain:@"获取验证码——后台返回数据格式有误" code:40000 userInfo:nil];
             errorBlock(err);
         }
@@ -46,96 +57,161 @@
     }];
 }
 
-+ (void)loginWithThirdPartyNickName:(NSString *)nickName withType:(NSString *)type withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock {
++ (void)loginWithThirdPartyNickName:(NSString *)nickName withType:(NSString *)type withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock
+{
+    NSString * clientVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];//获取应用版本号
+    
+    NSString * osVersion = [[UIDevice currentDevice] systemVersion];//系统版本
+    
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    CGSize size = rect.size;
+    int width = size.width;
+    int height = size.height;
+    
+    NSString * resolution = [NSString stringWithFormat:@"%d,%d",width,height];//屏幕分辨率
+    NSString * osName = @"ios";
+    NSString * identify = @"";
+    
     NSString *paramType = @"qq";
-    if ([type isEqualToString:ThirdPartyLoginWithWX]) {
+    if ([type isEqualToString:ThirdPartyLoginWithWX])
+    {
         paramType = @"wechat";
     }
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_LoginByThird] withParamDic:@{@"num":nickName, @"type":paramType} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSData class]] && ((NSData*)response).length>0) {
+    NSString * channel_id = @"99999999";
+    
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_LoginByThird] withParamDic:@{@"key":nickName, @"type":paramType,@"osName":osName,@"clientVersion":clientVersion,@"osVersion":osVersion,@"resolution":resolution,@"identify":identify,@"channel_id":channel_id} withSuccessBlock:^(id response)
+    {
             NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-            if ([result isEqualToString:@"wrong"] || [result isEqualToString:@"\"wrong\""]) {
-                successBlock(NO);
-            }
-            else {
-                NSError *error = nil;
-                id json = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
-                NSDictionary *responseDic = nil;
-                if ([json isKindOfClass:[NSArray class]]) {
-                    responseDic = [(NSArray*)json firstObject];
-                }
-                else if ([json isKindOfClass:[NSDictionary class]]) {
-                    responseDic = json;
-                }
-                if (error || !responseDic) {
-                    NSLog(@"string2dic err:%@",error);
-                    if (!responseDic) {
-                        NSLog(@"responseDic is nil");
-                    }
-                    successBlock(NO);
-                }
-                else {
+            NSLog(@"result===================%@",result);
+            
+            NSMutableDictionary *dictResponse=[result JSONValue];
+            NSMutableDictionary *dataDic = [dictResponse objectForKey:@"data"][@"user"];
+            int ret = [[dictResponse objectForKey:@"ret"]intValue];
+            GetAppDelegate.refresh_token = [dictResponse objectForKey:@"data"][@"refresh_token"];
+            GetAppDelegate.access_token = [dictResponse objectForKey:@"data"][@"access_token"];
+            GetAppDelegate.expire = [[dictResponse objectForKey:@"data"][@"expire"]intValue];
+        
+           NSLog(@"GetAppDelegate.access_token===================%@",GetAppDelegate.access_token);
+        
+           [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.refresh_token forKey:RefreshToken];
+        
+           [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.access_token forKey:AccessToken];
+           [[NSUserDefaults standardUserDefaults] synchronize];
+        
+            if (ret == 0)
+            {
+                NSLog(@"dataDic===================%@",dataDic);
+                if ([dataDic isKindOfClass:[NSMutableDictionary class]])
+                {
                     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:loginTime];
                     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:addUserMarkByLogin];
-                    User = [[UserBean alloc] initWithUserInfoDic:responseDic];
-                    [NSKeyedArchiver archiveRootObject:responseDic toFile:UserInfoFilePath];
+                    User = [[UserBean alloc] initWithUserInfoDic:dataDic];
+                    [NSKeyedArchiver archiveRootObject:dataDic toFile:UserInfoFilePath];
                     successBlock(YES);
                 }
+                else
+                {
+                    if (ret== 1000)
+                    {
+                        NSString * message = [[result JSONValue] objectForKey:@"msg"];
+                        [ProgressHUD showText:message Interaction:YES Hide:YES];
+                        [GetAppDelegate Refreshtoken];
+                        return;
+                    }
+                    NSError *err = [NSError errorWithDomain:@"获取数据——后台返回数据格式有误" code:40000 userInfo:nil];
+                    errorBlock(err);
+                }
             }
-        }
-        else {
-            successBlock(NO);
-        }
-    } withErrorBlock:^(NSError *err) {
+            else
+            {
+                successBlock(NO);
+                NSString * message = [dictResponse objectForKey:@"message"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+            }
+    } withErrorBlock:^(NSError *err)
+     {
         errorBlock(err);
     }];
 }
 
-+ (void)loginWithPhoneNum:(NSString *)phoneNum withCheckCode:(NSString *)checkCode withNickName:(NSString *)nickName withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock {
-    NSMutableDictionary *paramDic = [[NSMutableDictionary alloc] initWithDictionary:@{@"phone":phoneNum, @"code":checkCode}];
-    if (nickName && ![nickName isEqualToString:@""]) {
-        [paramDic setObject:nickName forKey:@"nickname"];
-    }
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_LoginAndRegister] withParamDic:paramDic withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSData class]]) {
-            NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-            NSLog(@"loginWithPhoneNum err:%@",result);
-            NSError *error = nil;
-            id json = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
-            NSDictionary *responseDic = nil;
-            if ([json isKindOfClass:[NSArray class]]) {
-                responseDic = [(NSArray*)json firstObject];
-            }
-            else if ([json isKindOfClass:[NSDictionary class]]) {
-                responseDic = json;
-            }
-            if (error || !responseDic) {
-                NSLog(@"string2dic err:%@",error);
-                if (!responseDic) {
-                    NSLog(@"responseDic is nil");
-                }
-                successBlock(NO);
-            }
-            else {
-                [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:loginTime];
-                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:addUserMarkByLogin];
-                User = [[UserBean alloc] initWithUserInfoDic:responseDic];
-                [NSKeyedArchiver archiveRootObject:responseDic toFile:UserInfoFilePath];
-                successBlock(YES);
-            }
-        }
-        else {
-            NSError *err = [NSError errorWithDomain:@"登录注册——后台返回数据格式有误" code:40000 userInfo:nil];
-            errorBlock(err);
-        }
-    } withErrorBlock:^(NSError *err) {
-        errorBlock(err);
-    }];
++ (void)loginWithPhoneNum:(NSString *)phoneNum withCheckCode:(NSString *)checkCode withNickName:(NSString *)nickName withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock
+{
+    NSString * clientVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];//获取应用版本号
+    
+    NSString * osVersion = [[UIDevice currentDevice] systemVersion];//系统版本
+    
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    CGSize size = rect.size;
+    int width = size.width;
+    int height = size.height;
+    
+    NSString * resolution = [NSString stringWithFormat:@"%d,%d",width,height];//屏幕分辨率
+    NSString * osName = @"ios";
+    NSString * identify = @"";
+    
+    NSString *paramType = @"sns";
+    NSString * channel_id = @"99999999";
+  
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_LoginByThird] withParamDic:@{@"key":checkCode, @"type":paramType,@"osName":osName,@"clientVersion":clientVersion,@"osVersion":osVersion,@"resolution":resolution,@"identify":identify,@"channel_id":channel_id} withSuccessBlock:^(id response)
+     {
+         NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"result===================%@",result);
+         
+         NSMutableDictionary *dictResponse=[result JSONValue];
+         NSMutableDictionary *dataDic = [dictResponse objectForKey:@"data"][@"user"];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         GetAppDelegate.refresh_token = [dictResponse objectForKey:@"data"][@"refresh_token"];
+         GetAppDelegate.access_token = [dictResponse objectForKey:@"data"][@"access_token"];
+         GetAppDelegate.expire = [[dictResponse objectForKey:@"data"][@"expire"]intValue];
+         
+         NSLog(@"GetAppDelegate.access_token===================%@",GetAppDelegate.access_token);
+         
+         [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.refresh_token forKey:RefreshToken];
+         
+         [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.access_token forKey:AccessToken];
+         [[NSUserDefaults standardUserDefaults] synchronize];
+         
+         if (ret == 0)
+         {
+             NSLog(@"dataDic===================%@",dataDic);
+             if ([dataDic isKindOfClass:[NSMutableDictionary class]])
+             {
+                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:loginTime];
+                 [[NSUserDefaults standardUserDefaults] setBool:NO forKey:addUserMarkByLogin];
+                 User = [[UserBean alloc] initWithUserInfoDic:dataDic];
+                 [NSKeyedArchiver archiveRootObject:dataDic toFile:UserInfoFilePath];
+                 successBlock(YES);
+             }
+             else
+             {
+                 if (ret== 1000)
+                 {
+                     NSString * message = [[result JSONValue] objectForKey:@"msg"];
+                     [ProgressHUD showText:message Interaction:YES Hide:YES];
+                     [GetAppDelegate Refreshtoken];
+                     return;
+                 }
+                 NSError *err = [NSError errorWithDomain:@"获取数据——后台返回数据格式有误" code:40000 userInfo:nil];
+                 errorBlock(err);
+             }
+         }
+         else
+         {
+             successBlock(NO);
+             NSString * message = [dictResponse objectForKey:@"message"];
+             [ProgressHUD showText:message Interaction:YES Hide:YES];
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         errorBlock(err);
+     }];
 }
 
 + (void)sendFeedBackWithUserName:(NSString *)userName withUserID:(NSString *)userID withContent:(NSString *)content withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock {
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_FeedBack] withParamDic:@{@"username":userName, @"user_id":userID, @"content":content} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSData class]]) {
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_FeedBack] withParamDic:@{@"username":userName, @"user_id":userID, @"content":content} withSuccessBlock:^(id response)
+    {
+        if ([response isKindOfClass:[NSData class]])
+        {
             NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
             if ([result isEqualToString:@"\"success\""]) {
                 successBlock(YES);
@@ -153,34 +229,38 @@
     }];
 }
 
-+ (void)refleshUserInfoWithUserID:(NSString *)userID withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock {
-    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_GetSingleUserInfo] withParamDic:@{@"user_id":userID} withSuccessBlock:^(id response) {
-        if ([response isKindOfClass:[NSData class]]) {
-            NSString *result = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
-            NSLog(@"refleshUserInfoWithUserID err:%@",result);
-            NSError *error = nil;
-            id json = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error:&error];
-            NSDictionary *responseDic = nil;
-            if ([json isKindOfClass:[NSArray class]]) {
-                responseDic = [(NSArray*)json firstObject];
-            }
-            else if ([json isKindOfClass:[NSDictionary class]]) {
-                responseDic = json;
-            }
-            if (error || !responseDic) {
-                NSLog(@"string2dic err:%@",error);
-                if (!responseDic) {
-                    NSLog(@"responseDic is nil");
-                }
-                successBlock(NO);
-            }
-            else {
-                User = [[UserBean alloc] initWithUserInfoDic:responseDic];
-                [NSKeyedArchiver archiveRootObject:responseDic toFile:UserInfoFilePath];
++ (void)refleshUserInfoWithUserID:(NSString *)userID withSuccessBlock:(void(^)(BOOL finished))successBlock withErrorBlock:(void(^)(NSError *err))errorBlock
+{
+    [NetworkEngine httpRequestPostWithURL:[NSString stringWithFormat:@"%@%@",Server_RequestHost, Server_GetSingleUserInfo] withParamDic:@{@"user_id":userID} withSuccessBlock:^(id response)
+     {
+         NSString *responseString = [[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding];
+         NSLog(@"responseString-------7777%@",responseString);
+         NSMutableDictionary *dictResponse=[responseString JSONValue];
+         int ret = [[dictResponse objectForKey:@"ret"]intValue];
+         NSMutableDictionary * dataDic = [dictResponse objectForKey:@"data"];
+         
+        if (ret == 0)
+        {
+            if ([dataDic isKindOfClass:[NSMutableDictionary class]])
+            {
+                User = [[UserBean alloc] initWithUserInfoDic:dataDic];
+                [NSKeyedArchiver archiveRootObject:dataDic toFile:UserInfoFilePath];
                 successBlock(YES);
             }
+            else
+            {
+                successBlock(NO);
+            }
         }
-        else {
+        else
+        {
+            if (ret== 1000)
+            {
+                NSString * message = [[responseString JSONValue] objectForKey:@"msg"];
+                [ProgressHUD showText:message Interaction:YES Hide:YES];
+                [GetAppDelegate Refreshtoken];
+                return;
+            }
             NSError *err = [NSError errorWithDomain:@"刷新用户信息——后台返回数据格式有误" code:40000 userInfo:nil];
             errorBlock(err);
         }

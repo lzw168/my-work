@@ -22,6 +22,7 @@
 @property (nonatomic, strong) NSString *commentScore;
 @property (nonatomic, strong) NSString *commentAvatar;//头像
 @property (nonatomic, strong) NSString *commentUserName;
+@property (nonatomic, strong) NSString *commentNickName;
 
 - (instancetype)initWithDic:(NSDictionary *)dic;
 

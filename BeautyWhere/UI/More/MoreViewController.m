@@ -137,16 +137,19 @@
     }
     else if ([pressedCell.textLabel.text isEqualToString:@"检查更新"]) {
         [ProgressHUD show:@"正在检查" Interaction:NO Hide:NO];//exit(0);用户退出
-        [MorePageNetwork checkUpdateWithSuccessBlock:^(NSString *version, NSString *tip, NSString *downloadURL, BOOL mustUpdate) {
+        [MorePageNetwork checkUpdateWithSuccessBlock:^(NSString *version, NSString *tip, NSString *downloadURL, BOOL mustUpdate)
+        {
             if (![version isEqualToString:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]]) {
                 self.upgradeVersionURL = downloadURL;
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:tip delegate:self cancelButtonTitle:@"不要" otherButtonTitles:@"去下载", nil];
                 [alert show];
             }
-            else {
+            else
+            {
                 [ProgressHUD showText:@"已经是最新版本了" Interaction:YES Hide:YES];
             }
-        } withErrorBlock:^(NSError *err) {
+        } withErrorBlock:^(NSError *err)
+        {
             NSLog(@"checkUpdate err:%@",err);
         }];
     }
@@ -160,15 +163,19 @@
 }
 
 #pragma mark - UIAlertViewDelegate
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1 && self.upgradeVersionURL && ![self.upgradeVersionURL isEqualToString:@""]) {
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1 && self.upgradeVersionURL && ![self.upgradeVersionURL isEqualToString:@""])
+    {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:self.upgradeVersionURL]];
     }
 }
 
 #pragma mark - UIButton Response
-- (void)pressedLogout:(id)snder {
-    if (self.isLogined) {
+- (void)pressedLogout:(id)snder
+{
+    if (self.isLogined)
+    {
         NSError *err = nil;
         if ([[NSFileManager defaultManager] removeItemAtPath:UserInfoFilePath error:&err]) {
             if (!err) {
@@ -187,7 +194,8 @@
             }
         }
     }
-    else {
+    else
+    {
         [ViewController presentLoginViewWithViewController:self backItemType:BackItemTypeBackImg];
     }
 }

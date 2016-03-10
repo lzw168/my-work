@@ -150,15 +150,18 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.row == mRowCount) {
-        if ([_delegate respondsToSelector:@selector(loadData:FromView:)]) {
+    if (indexPath.row == mRowCount)
+    {
+        if ([_delegate respondsToSelector:@selector(loadData:FromView:)])
+        {
             LoadMoreCell *vLoadCell =(LoadMoreCell *)[tableView cellForRowAtIndexPath:indexPath];
             [_delegate loadData:^(int aAddedRowCount) {
                 vLoadCell.userInteractionEnabled = NO;
                 [vLoadCell.indicatorView setHidden:NO];
                 [vLoadCell.indicatorView startAnimating];
                 NSInteger vNewRowCount = aAddedRowCount;
-                if (vNewRowCount > 0) {
+                if (vNewRowCount > 0)
+                {
                     NSMutableArray *indexPaths = [NSMutableArray array];
                     for (NSInteger lIndex = mRowCount; lIndex < mRowCount + vNewRowCount; lIndex++) {
                         [indexPaths addObject:[NSIndexPath indexPathForRow:lIndex inSection:0]];
@@ -173,8 +176,10 @@
                 [vLoadCell.indicatorView stopAnimating];
             }FromView:self];
         }
-    }else{
-        if ([_delegate respondsToSelector:@selector(didSelectedRowAthIndexPath:IndexPath: FromView:)]) {
+    }else
+    {
+        if ([_delegate respondsToSelector:@selector(didSelectedRowAthIndexPath:IndexPath: FromView:)])
+        {
             [_delegate didSelectedRowAthIndexPath:tableView IndexPath:indexPath FromView:self];
         }
     }
@@ -189,11 +194,13 @@
 }
 
 #pragma mark Data Source Loading / Reloading Methods
-- (void)reloadTableViewDataSource{
+- (void)reloadTableViewDataSource
+{
 	//  should be calling your tableviews data source model to reload
 	//  put here just for demo
 	_reloading = YES;
-    if ([_delegate respondsToSelector:@selector(refreshData: FromView:)]) {
+    if ([_delegate respondsToSelector:@selector(refreshData: FromView:)])
+    {
         [_delegate refreshData:^{
             [self doneLoadingTableViewData];
         } FromView:self];
@@ -249,51 +256,60 @@
 
 
 #pragma mark SlideTableViewCellDelegate
--(void)didCellWillShow:(id)aSender{
+-(void)didCellWillShow:(id)aSender
+{
     slidedCell = aSender;
     self.canCustomEdit = YES;
 }
 
--(void)didCellWillHide:(id)aSender{
+-(void)didCellWillHide:(id)aSender
+{
     slidedCell = nil;
     self.canCustomEdit = NO;
 }
 
--(void)didCellHided:(id)aSender{
+-(void)didCellHided:(id)aSender
+{
     slidedCell = nil;
     self.canCustomEdit = NO;
 }
 
--(void)didCellShowed:(id)aSender{
+-(void)didCellShowed:(id)aSender
+{
     slidedCell = aSender;
     self.canCustomEdit = YES;
     NSLog(@"调用Delegate");
 }
 
 #pragma mark HitViewDelegate
--(UIView *)hitViewHitTest:(CGPoint)point withEvent:(UIEvent *)event TouchView:(UIView *)aView{
+-(UIView *)hitViewHitTest:(CGPoint)point withEvent:(UIEvent *)event TouchView:(UIView *)aView
+{
     BOOL vCloudReceiveTouch = NO;
-//    CGPoint vTouchPoint = [self convertPoint:point fromView:self.homeTableView];
+    //CGPoint vTouchPoint = [self convertPoint:point fromView:self.homeTableView];
     CGRect vSlidedCellRect = [self convertRect:slidedCell.frame fromView:self.homeTableView];
     vCloudReceiveTouch = CGRectContainsPoint(vSlidedCellRect, point);
-    if (!vCloudReceiveTouch) {
+    if (!vCloudReceiveTouch)
+    {
         [slidedCell hideMenuView:YES Animated:YES];
     }
     return vCloudReceiveTouch ? [slidedCell hitTest:point withEvent:event] : aView;
 }
 
 #pragma mark 点击删除
--(void)didCellClickedDeleteButton:(UITableViewCell *)aSender{
+-(void)didCellClickedDeleteButton:(UITableViewCell *)aSender
+{
     self.canCustomEdit = NO;
     NSIndexPath *vIndex = [self.homeTableView indexPathForCell:aSender];
-    if ([_delegate respondsToSelector:@selector(didDeleteCellAtIndexpath:IndexPath:FromView:)]) {
+    if ([_delegate respondsToSelector:@selector(didDeleteCellAtIndexpath:IndexPath:FromView:)])
+    {
         [_delegate didDeleteCellAtIndexpath:self.homeTableView IndexPath:vIndex FromView:self];
     }
     [self.homeTableView deleteRowsAtIndexPaths:@[vIndex,] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark 点击更多
--(void)didCellClickedMoreButton:(id)aSender{
+-(void)didCellClickedMoreButton:(id)aSender
+{
 }
 
 @end

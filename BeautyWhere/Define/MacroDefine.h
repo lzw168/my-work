@@ -61,4 +61,15 @@ static NSString * const ThirdPartyLoginWithWX = @"loginWithWX";
 #pragma mark - color
 #define KMainBackgroundColor [UIColor colorWithHexString:@"#f8f8f8"]
 
+#define RatioWidth ScreenWidth/1080
+#define RatioHeight ScreenHeight/1920
+
+#define RefreshToken @"RefreshToken"
+#define AccessToken  @"AccessToken"
+
+#define Reciver @"Reciver"
+#define Mobile  @"Mobile"
+#define Location @"Location"
+#define AddressID @"addressid"
+
 #endif

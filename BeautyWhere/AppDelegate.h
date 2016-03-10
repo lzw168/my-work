@@ -24,8 +24,23 @@ typedef void (^locationResponseBlock)(NSString *lng, NSString *lat);
 @property (nonatomic, assign) BOOL mapManagerIsOK;
 @property (nonatomic, weak) UIViewController *openURLHandlerViewController;
 @property (strong, nonatomic) NSString *paySource;
+@property (strong, nonatomic) NSString *img1;
+@property (strong, nonatomic) NSString *img2;
+@property (strong, nonatomic) NSString *img3;
+@property (strong, nonatomic) NSString *refresh_token;
+@property (strong, nonatomic) NSString *access_token;
+@property (strong, nonatomic) NSString *receiver;
+@property (strong, nonatomic) NSString *mobile;
+@property (strong, nonatomic) NSString *location;
+@property (strong, nonatomic) NSString *addressid;
+@property (nonatomic) unsigned int expire;
+@property (strong, nonatomic) NSString *fee_shipping_num;
+@property (strong, nonatomic) NSString *img_path;
+@property (strong, nonatomic) NSString *service_tel;
+@property (strong, nonatomic) NSString *rank_visitor;
+@property (nonatomic, strong) UIImage *cacheHeaderImg;
 
 - (void)startLocate;
-
+- (void)Refreshtoken;
 @end
 

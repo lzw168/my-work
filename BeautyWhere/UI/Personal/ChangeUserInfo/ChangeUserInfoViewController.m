@@ -52,7 +52,8 @@
         UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, cellSize.height-0.5, ScreenWidth, 0.5)];
         line.backgroundColor = [UIColor lightGrayColor];
         [cell.contentView addSubview:line];
-        if (indexPath.row == 0) {
+        if (indexPath.row == 0)
+        {
             UIImageView *headImgView = [[UIImageView alloc] initWithFrame:CGRectMake(cellSize.width-100, 10, 60, 60)];
             headImgView.tag = changeUserInfoHeadImgViewTag;
             [headImgView setImageWithURL:[NSURL URLWithString:User.avatar] placeholderImage:[UIImage imageNamed:@"touxiang.png"]];
@@ -60,10 +61,12 @@
             headImgView.clipsToBounds = YES;
             [cell.contentView addSubview:headImgView];
         }
-        else {
-            UILabel *content = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2, 0, ScreenWidth/2-20, cellSize.height)];
+        else
+        {
+            UILabel *content = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2, 0, ScreenWidth/2-30, cellSize.height)];
             content.tag = changeUserInfoContentLabelTag;
-            content.text = User.userName;
+            content.text = User.nickName;
+            [content setTextAlignment:NSTextAlignmentRight];
             [cell.contentView addSubview:content];
         }
     }
@@ -126,48 +129,52 @@
     [self presentViewController:p animated:YES completion:nil];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
     UIImage *img = [info objectForKey:UIImagePickerControllerEditedImage];
     __weak typeof(self) wself = self;
-    [PersonalPageNetwork changeUserName:nil headerImg:img withUserID:User.userID withMobileNumber:User.mobile withSuccessBlock:^(NSString *userName, NSString *imgURL) {
-        [MorePageNetwork refleshUserInfoWithUserID:User.userID withSuccessBlock:^(BOOL finished) {
-            if (!finished) {
+    [PersonalPageNetwork changeUserName:nil headerImg:img withUserID:User.userID withMobileNumber:User.mobile withSuccessBlock:^(NSString *userName, NSString *imgURL)
+     {
+        [MorePageNetwork refleshUserInfoWithUserID:User.userID withSuccessBlock:^(BOOL finished)
+        {
+            if (!finished)
+            {
                 NSLog(@"获取不了新用户信息的json 数据");
             }
-            else {
-//                [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+            else
+            {
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
                 UIImageView *headImgView = (UIImageView*)[cell.contentView viewWithTag:changeUserInfoHeadImgViewTag];
                 headImgView.image = img;
-                self.personalPage.cacheHeaderImg = img;
+                GetAppDelegate.cacheHeaderImg = img;
                 [ProgressHUD showText:@"头像更改成功" Interaction:YES Hide:YES];
             }
-        } withErrorBlock:^(NSError *err) {
+        } withErrorBlock:^(NSError *err)
+        {
             NSLog(@"更新用户信息有误：%@",err);
             NSError *error = nil;
             BOOL removeFinished;
             removeFinished = [[NSFileManager defaultManager] removeItemAtPath:UserInfoFilePath error:&error];
-            if (error) {
+            if (error)
+            {
                 NSLog(@"删除用户信息文件有误：%@",error);
             }
-            else if (removeFinished) {
+            else if (removeFinished)
+            {
                 User = nil;
             }
             [wself.navigationController popViewControllerAnimated:YES];
             [ProgressHUD showText:@"获取不了新的用户数据，请重新登录" Interaction:YES Hide:YES];
         }];
-  /*      NSMutableDictionary *userInfoDic = [NSKeyedUnarchiver unarchiveObjectWithFile:UserInfoFilePath];NSLog(@"[imgURL substringFromIndex:Server_ImgHost.length]:%@",[imgURL substringFromIndex:Server_ImgHost.length]);
-        [userInfoDic setObject:[imgURL substringFromIndex:Server_ImgHost.length] forKey:@"username"];
-        [NSKeyedArchiver archiveRootObject:userInfoDic toFile:UserInfoFilePath];
-        User.avatar = imgURL;
-        [ProgressHUD showText:@"头像更改成功" Interaction:YES Hide:YES];
-        [self.tableView reloadData];*/
-    } withErrorBlock:^(NSError *err) {
+    } withErrorBlock:^(NSError *err)
+     {
         NSLog(@"change img err:%@",err);
-        if (err.code == -1009) {
+        if (err.code == -1009)
+        {
             [ProgressHUD showText:@"无网络连接，请检查网络后重试" Interaction:YES Hide:YES];
         }
-        else {
+        else
+        {
             [ProgressHUD showText:@"上传失败，请检查网络后重试" Interaction:YES Hide:YES];
         }
     }];

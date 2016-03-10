@@ -219,9 +219,11 @@
 }
 
 #pragma mark  点击更多
--(void)moreButtonClicked:(id)sender{
+-(void)moreButtonClicked:(id)sender
+{
     NSLog(@"点击更多");
-    if ([_delegate respondsToSelector:@selector(didCellClickedMoreButton:)]) {
+    if ([_delegate respondsToSelector:@selector(didCellClickedMoreButton:)])
+    {
         [_delegate didCellClickedMoreButton:self];
     }
 }

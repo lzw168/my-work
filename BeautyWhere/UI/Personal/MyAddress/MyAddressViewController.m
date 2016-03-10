@@ -16,13 +16,17 @@
 #import "IntegralTableViewController.h"
 #import "InformationViewController.h"
 #import "AddMyAddressViewController.h"
+#import "AddressPageNetwork.h"
+#import "AddressBean.h"
 
 @interface MyAddressViewController ()
 
 @property (nonatomic, weak) UserBean *user;
-@property (nonatomic, strong) NSArray *detailArr;
-@property (nonatomic, strong) NSArray *titleArr;
-@property (nonatomic, strong) NSArray *mobileArr;
+@property (nonatomic, strong) NSMutableArray *detailArr;
+@property (nonatomic, strong) NSMutableArray *titleArr;
+@property (nonatomic, strong) NSMutableArray *mobileArr;
+@property (nonatomic, strong) NSMutableArray *addressidArr;
+@property (nonatomic, strong) NSMutableArray *regionArr;
 @end
 
 @implementation MyAddressViewController
@@ -31,9 +35,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.detailArr = @[@"广州市越秀区龟岗大马路江岭东", @"广州市越秀区龟岗大马路江岭东",@"广州市越秀区龟岗大马路江岭东",@"广州市越秀区龟岗大马路江岭东",@"广州市越秀区龟岗大马路江岭东"];
-    self.titleArr = @[@"steven", @"steven",@"steven", @"steven",@"steven"];
-    self.mobileArr = @[@"13560242703",@"13560242703",@"13560242703",@"13560242703",@"13560242703"];
+    self.detailArr = [[NSMutableArray alloc]init];
+    self.titleArr = [[NSMutableArray alloc]init];
+    self.mobileArr = [[NSMutableArray alloc]init];
+    self.addressidArr = [[NSMutableArray alloc]init];
+    self.regionArr = [[NSMutableArray alloc]init];
     self.tableView.scrollEnabled = NO;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     //self.tableView.backgroundColor = [UIColor whiteColor];
@@ -55,18 +61,26 @@
 {
     [super viewWillAppear:animated];
     NSLog(@"User:%@",User);
-    NSLog(@"User.userID:%@",User.userID);
-    if (!User || !User.userID) {
+    NSLog(@"User.userID----2:%@",User.userID);
+    if (!User || !User.userID)
+    {
         LoginViewController *login = [[LoginViewController alloc] init];
         login.edgesForExtendedLayout = UIRectEdgeNone;
         login.backItemType = BackItemTypeNone;
         login.enterType = EnterTypePush;
         [self.navigationController pushViewController:login animated:NO];
     }
-    [self.tableView reloadData];
+    //[self.tableView reloadData];
+    [self.titleArr removeAllObjects];
+    [self.mobileArr removeAllObjects];
+    [self.detailArr removeAllObjects];
+    [self.addressidArr removeAllObjects];
+    [self.regionArr removeAllObjects];
+    [self startNet];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -74,10 +88,11 @@
 #pragma mark - UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 5;
+    return [self.titleArr count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"reuseIdentify"];
     CGSize cellSize = [tableView rectForRowAtIndexPath:indexPath].size;
     if (!cell)
@@ -106,6 +121,18 @@
         UIColor *color = [[UIColor alloc]initWithRed:92/255.0 green:106/255.0 blue:133/255.0 alpha:1];
         //通过RGB来定义自己的颜色
         cell.backgroundColor = color;
+        
+        GetAppDelegate.receiver = [self.titleArr objectAtIndex:indexPath.row];
+        GetAppDelegate.mobile = [self.mobileArr objectAtIndex:indexPath.row];
+        GetAppDelegate.location = [self.detailArr objectAtIndex:indexPath.row];
+        GetAppDelegate.addressid = [self.addressidArr objectAtIndex:indexPath.row];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.receiver forKey:Reciver];
+        [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.mobile forKey:Mobile];
+        [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.location forKey:Location];
+        [[NSUserDefaults standardUserDefaults] setObject:GetAppDelegate.addressid forKey:AddressID];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
     }
     else
     {
@@ -128,9 +155,23 @@
 #pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIViewController *targetViewController = nil;
+    AddMyAddressViewController *targetViewController = nil;
     targetViewController = [[AddMyAddressViewController alloc] init];
+    targetViewController.editstatus = @"1";
     targetViewController.title = @"修改收货地址";
+    targetViewController.addressid = [self.addressidArr objectAtIndex:indexPath.row];
+    targetViewController.mobile = [self.mobileArr objectAtIndex:indexPath.row];
+    targetViewController.location = [self.detailArr objectAtIndex:indexPath.row];
+    targetViewController.reciver = [self.titleArr objectAtIndex:indexPath.row];
+    targetViewController.MyAddress = [self.regionArr objectAtIndex:indexPath.row];
+    if (indexPath.row == 0)
+    {
+        targetViewController.is_default = @"1";
+    }
+    else
+    {
+        targetViewController.is_default = @"0";
+    }
     targetViewController.edgesForExtendedLayout = UIRectEdgeNone;
         [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
         [self.navigationController pushViewController:targetViewController animated:YES];
@@ -155,8 +196,14 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [ProgressHUD showText:@"删除操作" Interaction:YES Hide:YES];
-    //[tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    //[ProgressHUD showText:@"删除操作" Interaction:YES Hide:YES];
+    //[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    if ([self.addressidArr count] == 0)
+    {
+        [self.tableView reloadData];
+        return;
+    }
+    [self deladdress:[self.addressidArr objectAtIndex:indexPath.row]];
     return;
 }
 
@@ -164,10 +211,65 @@
 {
     //[ProgressHUD showText:@"弹出新增界面" Interaction:YES Hide:YES];
     AddMyAddressViewController * addmyaddr = [[AddMyAddressViewController alloc]init];
+    addmyaddr.editstatus = @"0";
     addmyaddr.title = @"新建收货地址";
+    addmyaddr.hidesBottomBarWhenPushed = YES;
     addmyaddr.edgesForExtendedLayout = UIRectEdgeNone;
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
     [self.navigationController pushViewController:addmyaddr animated:YES];
+}
+
+#pragma mark - Net
+- (void)startNet
+{
+    __weak typeof(self) wself = self;
+    [AddressPageNetwork showAddress:^(NSMutableDictionary *RankDic)
+     {
+         [ProgressHUD dismiss];
+         if (RankDic == nil || RankDic == NULL)
+         {
+             //[ProgressHUD showText:@"请设置收货地址" Interaction:YES Hide:YES];
+             [self.tableView reloadData];
+             return;
+         }
+         
+         AddressBean *address = [[AddressBean alloc] initWithDic:RankDic];
+         [self.detailArr addObject:[NSString stringWithFormat:@"%@",[RankDic objectForKey:@"location"]]];
+         [self.titleArr addObject:[NSString stringWithFormat:@"%@",[RankDic objectForKey:@"receiver"]]];
+         [self.mobileArr addObject:[NSString stringWithFormat:@"%@",[RankDic objectForKey:@"mobile"]]];
+         [self.addressidArr addObject:[NSString stringWithFormat:@"%d",address.addressid]];
+         [self.regionArr addObject:address.region];
+         NSLog(@"addressidArr===============%d",address.addressid);
+         [wself.tableView reloadData];
+     } withErrorBlock:^(NSError *err)
+     {
+         [ProgressHUD showText:@"获取失败，请检查网络后稍后再试" Interaction:YES Hide:YES];
+     }];
+}
+
+#pragma mark - Net
+- (void)deladdress:(NSString *)AddressId
+{
+    [AddressPageNetwork DelAddressWithAddressId:[AddressId intValue] withSuccessBlock:^(BOOL finished)
+     {
+         if (finished)
+         {
+             //[ProgressHUD showText:@"删除收货地址成功" Interaction:YES Hide:YES];
+             [self.titleArr removeAllObjects];
+             [self.mobileArr removeAllObjects];
+             [self.detailArr removeAllObjects];
+             [self.addressidArr removeAllObjects];
+             [self.regionArr removeAllObjects];
+             [self startNet];
+         }
+         else
+         {
+             [ProgressHUD showText:@"删除收货地址失败" Interaction:YES Hide:YES];
+         }
+     } withErrorBlock:^(NSError *err)
+     {
+         [ProgressHUD showText:@"获取失败，请检查网络后稍后再试" Interaction:YES Hide:YES];
+     }];
 }
 
 @end

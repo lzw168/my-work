@@ -97,25 +97,23 @@
 #pragma mark -
 #pragma mark Setters
 
-- (void)refreshLastUpdatedDate {
-	
-	if ([_delegate respondsToSelector:@selector(egoRefreshTableHeaderDataSourceLastUpdated:)]) {
-		
+- (void)refreshLastUpdatedDate
+{
+    if ([_delegate respondsToSelector:@selector(egoRefreshTableHeaderDataSourceLastUpdated:)])
+    {
 		NSDate *date = [_delegate egoRefreshTableHeaderDataSourceLastUpdated:self];
-		
 		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 		[formatter setAMSymbol:@"AM"];
 		[formatter setPMSymbol:@"PM"];
 		[formatter setDateFormat:@"MM/dd/yyyy hh:mm:a"];
-		_lastUpdatedLabel.text = [NSString stringWithFormat:@"最近更新：%@", [formatter stringFromDate:date]];//Last Updated: %@
+		_lastUpdatedLabel.text = [NSString stringWithFormat:@"最近更新:%@", [formatter stringFromDate:date]];//Last Updated: %@
 		[[NSUserDefaults standardUserDefaults] setObject:_lastUpdatedLabel.text forKey:@"EGORefreshTableView_LastRefresh"];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		[formatter release];
 		
-	} else {
-		
+	} else
+    {
 		_lastUpdatedLabel.text = nil;
-		
 	}
 
 }

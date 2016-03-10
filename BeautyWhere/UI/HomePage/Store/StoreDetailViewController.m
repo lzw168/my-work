@@ -173,6 +173,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"reuse"];
     }
     [cell.contentView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
     switch (indexPath.section)
     {
         case 0:
@@ -182,7 +183,7 @@
                 case 0:
                 {
                     UIImageView *pic = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, CellHeight)];
-                    [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, self.infoBean.storeImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+                    [pic setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, self.infoBean.storeImage]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
                     self.Img = [pic image];
                     [cell.contentView addSubview:pic];
                 }
@@ -191,16 +192,48 @@
                 case 2:
                 {
                     NSString *iconImgStr = indexPath.row==1?@"dengwei.png":@"lianxidianhua.png";
-                    cell.imageView.image = [UIImage imageNamed:iconImgStr];
+                    UIImageView * headicon = [[UIImageView alloc]init];
+                    headicon.image = [UIImage imageNamed:iconImgStr];
+                    if (indexPath.row==1)
+                    {
+                        [headicon setFrame:CGRectMake(15, CellHeight/2-7.5, 35*RatioWidth, 50*RatioHeight)];
+                    }
+                    else
+                    {
+                        [headicon setFrame:CGRectMake(15, CellHeight/2-7.5, 24*RatioWidth, 44*RatioHeight)];
+                    }
+                    //cell.imageView.image = [UIImage imageNamed:iconImgStr];
+                    UILabel *textlabel = [[UILabel alloc]init];
+                    [textlabel setFrame:CGRectMake(headicon.frame.origin.x+25, CellHeight/2-15, ScreenWidth-headicon.frame.origin.x-25, 30)];
+                    [textlabel setFont:[UIFont systemFontOfSize:13.0]];
                     NSString *context = indexPath.row==1?self.infoBean.storeAddress:self.infoBean.storePhone;
-                    cell.textLabel.text = context;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    //cell.textLabel.text = context;
+                    //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    textlabel.text = context;
+                    [cell.contentView addSubview:headicon];
+                    [cell.contentView addSubview:textlabel];
                 }
                     break;
                 case 3:
-                    cell.imageView.image = [UIImage imageNamed:@"lianxidianhua.png"];
-                    cell.textLabel.text = self.infoBean.storeMobile;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                {
+                    //cell.imageView.image = [UIImage imageNamed:@"lianxidianhua.png"];
+                    //cell.textLabel.text = self.infoBean.storeMobile;
+                    //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    
+                    NSString *iconImgStr = @"lianxidianhua.png";
+                    UIImageView * headicon = [[UIImageView alloc]init];
+                    headicon.image = [UIImage imageNamed:iconImgStr];
+                    [headicon setFrame:CGRectMake(15, CellHeight/2-7.5, 24*RatioWidth, 44*RatioHeight)];
+                    //cell.imageView.image = [UIImage imageNamed:iconImgStr];
+                    UILabel *textlabel = [[UILabel alloc]init];
+                    [textlabel setFrame:CGRectMake(headicon.frame.origin.x+25, CellHeight/2-15, 180, 30)];
+                    [textlabel setFont:[UIFont systemFontOfSize:13.0]];
+                    NSString *context = self.infoBean.storeMobile;
+                    textlabel.text = context;
+                    [cell.contentView addSubview:headicon];
+                    [cell.contentView addSubview:textlabel];
+
+                }
                     break;
             }
         }
@@ -239,7 +272,7 @@
 {
     GoodsBean *goods = [self.goodsArr objectAtIndex:row];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, cellHeight-20, cellHeight-20)];
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, goods.goodsImgLastComponentURL]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, goods.img_thumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [cell.contentView addSubview:imgView];
     
     UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
@@ -269,11 +302,11 @@
 {
     CommentBean *comment = [self.commentArr objectAtIndex:row];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, cellHeight-20, cellHeight-20)];
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, comment.commentAvatar]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, comment.commentAvatar]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [cell.contentView addSubview:imgView];
     
     UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
-    name.text = comment.commentUserName;
+    name.text = comment.commentNickName;
     [cell.contentView addSubview:name];
     
     CGSize contentSize = [comment.commentContent boundingRectWithSize:CGSizeMake(ScreenWidth-name.frame.origin.x, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:nil context:nil].size;
@@ -288,7 +321,7 @@
 {
     StoreBean *goods = [self.shopsArr objectAtIndex:row];
     UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, cellHeight-20, cellHeight-20)];
-    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",Server_ImgHost, goods.storeImageThumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
+    [imgView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",GetAppDelegate.img_path, goods.storeImageThumb]] placeholderImage:[UIImage imageNamed:@"pic_2loading.png"]];
     [cell.contentView addSubview:imgView];
     
     UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(imgView.frame.origin.x+imgView.frame.size.width+10, 10, ScreenWidth-(imgView.frame.origin.x+imgView.frame.size.width+20), 13)];
@@ -316,10 +349,12 @@
 
 #pragma mark - UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    switch (indexPath.section) {
+    switch (indexPath.section)
+    {
         case 0:
         {
-            switch (indexPath.row) {
+            switch (indexPath.row)
+            {
                 case 1:
                 {
                     MapViewController *map = [[MapViewController alloc] init];
@@ -372,8 +407,10 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    switch (indexPath.section) {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.section)
+    {
         case 0:
             return indexPath.row==0?ScreenWidth*3/4:44;
             break;
@@ -386,7 +423,8 @@
         case 2:
         {
             CommentBean *comment = [self.commentArr objectAtIndex:indexPath.row];
-            CGFloat commentHeight = [comment.commentContent boundingRectWithSize:CGSizeMake(ScreenWidth-45, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17]} context:nil].size.height;NSLog(@"commentHeight:%f",commentHeight);
+            CGFloat commentHeight = [comment.commentContent boundingRectWithSize:CGSizeMake(ScreenWidth-45, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17]} context:nil].size.height;
+            NSLog(@"commentHeight:%f",commentHeight);
             return commentHeight+33;
         }
             break;
@@ -395,16 +433,20 @@
     }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
     return section!=0?44:0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
     return (section==1||section==0)?10:0;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    if (section != 0) {
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (section != 0)
+    {
         UIView *bg = [[UIView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 44)];
         bg.backgroundColor = [UIColor whiteColor];
         UIImageView *icon = [[UIImageView alloc] init];
@@ -428,7 +470,8 @@
         title.center = CGPointMake(title.center.x, bg.frame.size.height/2.0);
         [bg addSubview:icon];
         [bg addSubview:title];
-        if (section == 2) {
+        if (section == 2)
+        {
             UILabel *comment = [[UILabel alloc] init];
             comment.userInteractionEnabled = YES;
             comment.text = @"去评论";
@@ -452,8 +495,18 @@
 - (void)pressedRightBtn
 {
     //if ([self.presentedViewController isKindOfClass:[CollectionDetailViewController class]]) {
+    if (!User || !User.userID || [User.userID isEqualToString:@""])
+    {
+        LoginViewController *login = [[LoginViewController alloc] init];
+        login.edgesForExtendedLayout = UIRectEdgeNone;
+        login.backItemType = BackItemTypeBackImg;
+        login.enterType = EnterTypePush;
+        [self.navigationController pushViewController:login animated:NO];
+        return;
+    }
+    
     [ProgressHUD show:@"请稍后..." Interaction:YES Hide:NO];
-    [HomePageNetwork collectStoreWithUserID:User.userID withPartnerID:self.infoBean.storeID withType:self.isCollected?@"cancel":@"collect" withSuccessBlock:^(BOOL finished)
+    [HomePageNetwork collectStoreWithUserID:User.userID withPartnerID:self.infoBean.storeID withType:self.isCollected?@"0":@"1" withSuccessBlock:^(BOOL finished)
     {
         if (finished)
         {
@@ -471,7 +524,8 @@
             }
             [ProgressHUD dismiss];
         }
-        else {
+        else
+        {
             [ProgressHUD showText:@"操作失败，请检查网络稍后重试" Interaction:YES Hide:YES];
         }
     } withErrorBlock:^(NSError *err)
@@ -498,7 +552,8 @@
 }
 
 #pragma mark - Tool & Private
-- (void)setRightBtn {
+- (void)setRightBtn
+{
     UIImage *rightBtnImg = nil;
 //    if ([self.presentedViewController isKindOfClass:[CollectionDetailViewController class]]) {
         if (self.isCollected)
@@ -542,18 +597,21 @@
             {
                 NSMutableArray *shared = [[NSUserDefaults standardUserDefaults] objectForKey:sharedItem];
                 BOOL sharedContain = NO;
-                for (NSNumber *item in shared) {
-                    if (platformType == [item integerValue]) {
+                for (NSNumber *item in shared)
+                {
+                    if (platformType == [item integerValue])
+                    {
                         sharedContain = YES;
                         break;
                     }
                 }
                 if (!shared || !sharedContain)
                 {
-                    [ProgressHUD showText:@"分享成功，正在获取臭美币" Interaction:NO Hide:NO];
+                    [ProgressHUD showText:@"分享成功" Interaction:YES Hide:YES];
                     
                 }
-                else {
+                else
+                {
                     [ProgressHUD showText:@"分享成功" Interaction:YES Hide:YES];
                 }
             }

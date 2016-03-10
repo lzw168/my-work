@@ -22,6 +22,7 @@
     if (self) {
         self.delegate = delegate;
         self.titleLabel.text = title;
+        self.topimageview.frame = CGRectMake(0,0,ScreenWidth, 40);
         self.locatePicker.dataSource = self;
         self.locatePicker.delegate = self;
         
@@ -41,6 +42,7 @@
 
 - (void)showInView:(UIView *) view
 {
+    NSLog(@"width==============%f",self.frame.size.width);
     CATransition *animation = [CATransition  animation];
     animation.delegate = self;
     animation.duration = kDuration;
@@ -50,7 +52,7 @@
     [self setAlpha:1.0f];
     [self.layer addAnimation:animation forKey:@"DDLocateView"];
     
-    self.frame = CGRectMake(0, view.frame.size.height - self.frame.size.height, self.frame.size.width, self.frame.size.height);
+    self.frame = CGRectMake(0, view.frame.size.height - self.frame.size.height, view.frame.size.width, self.frame.size.height);
     
     [view addSubview:self];
 }
@@ -64,7 +66,8 @@
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-    switch (component) {
+    switch (component)
+    {
         case 0:
             return [provinces count];
             break;

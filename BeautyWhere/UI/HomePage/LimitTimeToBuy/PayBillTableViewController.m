@@ -102,8 +102,8 @@
                 break;
                 case 0:
                 {
-                    int price = [self.goods.goodsNowPrice floatValue]-[GetAppDelegate.user.money floatValue];
-                    NSString *TakePrice = [NSString stringWithFormat:@"%d",price];
+                    float price = [self.goods.goodsNowPrice floatValue]-[GetAppDelegate.user.money floatValue];
+                    NSString *TakePrice = [NSString stringWithFormat:@"%0.1f",price];
                     NSLog(@"总臭美币===============%@",GetAppDelegate.user.money);
                     if([self.goods.goodsNowPrice floatValue]>[GetAppDelegate.user.money floatValue])
                     {
@@ -189,7 +189,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 1) {
         [ProgressHUD show:nil Interaction:NO Hide:NO];
-        [HomePageNetwork checkGoodsOnSellOrNotWithGoodsID:self.goods.goodsID withType:self.goodsOnSellsType withSuccessBlock:^(BOOL finished)
+        [HomePageNetwork checkGoodsOnSellOrNotWithGoodsID:self.goods.actID withType:self.goodsOnSellsType withGoodsNum:@"1" withSuccessBlock:^(BOOL finished)
         {
             if (finished)
             {
@@ -201,9 +201,6 @@
                         break;
                     case CheckGoodsOnSellsTypeLimitToFactory:
                         sellType = @"flash";
-                        break;
-                    case CheckGoodsOnSellsTypeSeckill:
-                        sellType = @"seckill";
                         break;
                     case CheckGoodsOnSellsTypeShopping:
                         sellType = @"luojia";
@@ -222,7 +219,7 @@
                         payChannel = @"upacp";
                         break;
                 }
-                NSInteger fen = 0;
+                float fen = 0.0;
                 if([self.goods.goodsNowPrice floatValue]>[GetAppDelegate.user.money floatValue])
                 {
                     fen = [self.goods.goodsNowPrice floatValue]*100;
@@ -238,7 +235,8 @@
                     if (pingPPCharge)
                     {
                         GetAppDelegate.openURLHandlerViewController = self;
-                        [Pingpp createPayment:pingPPCharge appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error) {
+                        [Pingpp createPayment:pingPPCharge appURLScheme:@"paybillppp" withCompletion:^(NSString *result, PingppError *error)
+                        {
                             if (error) {
                                 [ProgressHUD showText:@"购买失败" Interaction:YES Hide:YES];
                             }
@@ -279,7 +277,7 @@
 {
     //[ProgressHUD showText:@"建设中。。。" Interaction:YES Hide:YES];
     [ProgressHUD show:nil];
-    [HomePageNetwork GetNewOrder:self.goods.goodsID withUserId:GetAppDelegate.user.userID withGoodsType:self.goods.goodsType withSuccessBlock:^(NSString *message)
+    [HomePageNetwork GetNewOrder:self.goods.goodsID withUserId:GetAppDelegate.user.userID withActivityId:self.goods.actID withAddressID:@"" withgoodsnum:@"" withSuccessBlock:^(NSString *message)
      {
          NSLog(@"message===============%@",message);
          [ProgressHUD showText:message Interaction:YES Hide:YES];
