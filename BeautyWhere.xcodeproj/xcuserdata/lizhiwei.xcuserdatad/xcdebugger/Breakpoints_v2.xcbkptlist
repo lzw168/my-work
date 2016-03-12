@@ -840,11 +840,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "823"
-            endingLineNumber = "823"
+            startingLineNumber = "826"
+            endingLineNumber = "826"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1000,11 +1000,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "829"
-            endingLineNumber = "829"
+            startingLineNumber = "832"
+            endingLineNumber = "832"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1016,11 +1016,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "850"
-            endingLineNumber = "850"
+            startingLineNumber = "853"
+            endingLineNumber = "853"
             landmarkName = "-getBusinessZoneWithCity:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1032,11 +1032,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "821"
-            endingLineNumber = "821"
+            startingLineNumber = "824"
+            endingLineNumber = "824"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -2391,11 +2391,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "397"
-            endingLineNumber = "397"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
             landmarkName = "-hideBuyBtn"
             landmarkType = "5">
          </BreakpointContent>
@@ -2407,11 +2407,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "401"
-            endingLineNumber = "401"
+            startingLineNumber = "411"
+            endingLineNumber = "411"
             landmarkName = "-AddBtn"
             landmarkType = "5">
          </BreakpointContent>
@@ -2423,11 +2423,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
+            startingLineNumber = "395"
+            endingLineNumber = "395"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -2455,11 +2455,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -2471,11 +2471,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "358"
-            endingLineNumber = "358"
+            startingLineNumber = "368"
+            endingLineNumber = "368"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -2487,11 +2487,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
+            startingLineNumber = "371"
+            endingLineNumber = "371"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -2965,11 +2965,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "756"
-            endingLineNumber = "756"
+            startingLineNumber = "761"
+            endingLineNumber = "761"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3123,11 +3123,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/CityViewController.m"
-            timestampString = "476189720.795354"
+            timestampString = "479373696.0347"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
             landmarkName = "-pressedBack"
             landmarkType = "5">
          </BreakpointContent>
@@ -3139,11 +3139,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/CityViewController.m"
-            timestampString = "476189720.795354"
+            timestampString = "479373696.0347"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
             landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3155,7 +3155,23 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479209863.541342"
+            timestampString = "479373382.035056"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "858"
+            endingLineNumber = "858"
+            landmarkName = "-getBusinessZoneWithCity:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "855"
@@ -3171,11 +3187,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479209863.541342"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "852"
-            endingLineNumber = "852"
+            startingLineNumber = "859"
+            endingLineNumber = "859"
             landmarkName = "-getBusinessZoneWithCity:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3187,27 +3203,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479209863.541342"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "856"
-            endingLineNumber = "856"
-            landmarkName = "-getBusinessZoneWithCity:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479209863.541342"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "876"
-            endingLineNumber = "876"
+            startingLineNumber = "879"
+            endingLineNumber = "879"
             landmarkName = "-getThemeGoods"
             landmarkType = "5">
          </BreakpointContent>
@@ -3219,11 +3219,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479209863.541342"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "866"
-            endingLineNumber = "866"
+            startingLineNumber = "869"
+            endingLineNumber = "869"
             landmarkName = "-hideCustomNavTitle:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3299,11 +3299,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479209863.541342"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "877"
-            endingLineNumber = "877"
+            startingLineNumber = "880"
+            endingLineNumber = "880"
             landmarkName = "-getThemeGoods"
             landmarkType = "5">
          </BreakpointContent>
@@ -3379,11 +3379,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "346"
-            endingLineNumber = "346"
+            startingLineNumber = "347"
+            endingLineNumber = "347"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -3427,11 +3427,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "715"
-            endingLineNumber = "715"
+            startingLineNumber = "720"
+            endingLineNumber = "720"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3443,11 +3443,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "843"
-            endingLineNumber = "843"
+            startingLineNumber = "846"
+            endingLineNumber = "846"
             landmarkName = "-updatePositionBtnTitle:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3459,11 +3459,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "840"
-            endingLineNumber = "840"
+            startingLineNumber = "843"
+            endingLineNumber = "843"
             landmarkName = "-updatePositionBtnTitle:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3491,11 +3491,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "702"
-            endingLineNumber = "702"
+            startingLineNumber = "707"
+            endingLineNumber = "707"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3539,11 +3539,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "381"
-            endingLineNumber = "381"
+            startingLineNumber = "382"
+            endingLineNumber = "382"
             landmarkName = "-hideBuyBtn"
             landmarkType = "5">
          </BreakpointContent>
@@ -3555,11 +3555,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478780047.530824"
+            timestampString = "479375995.300061"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3571,11 +3571,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478780047.530824"
+            timestampString = "479375995.300061"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -3715,11 +3715,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "667"
-            endingLineNumber = "667"
+            startingLineNumber = "672"
+            endingLineNumber = "672"
             landmarkName = "-pressedListBtn:"
             landmarkType = "5">
          </BreakpointContent>
@@ -4035,11 +4035,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478783805.383242"
+            timestampString = "479444653.976356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "444"
-            endingLineNumber = "444"
+            startingLineNumber = "454"
+            endingLineNumber = "454"
             landmarkName = "-magnifyImage:"
             landmarkType = "5">
          </BreakpointContent>
@@ -4051,11 +4051,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "426"
-            endingLineNumber = "426"
+            startingLineNumber = "427"
+            endingLineNumber = "427"
             landmarkName = "-magnifyImage:"
             landmarkType = "5">
          </BreakpointContent>
@@ -4083,11 +4083,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
-            timestampString = "478780047.530824"
+            timestampString = "479375995.300061"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -4099,11 +4099,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "321"
-            endingLineNumber = "321"
+            startingLineNumber = "322"
+            endingLineNumber = "322"
             landmarkName = "-tableView:didSelectRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -4115,11 +4115,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "353"
-            endingLineNumber = "353"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -4131,11 +4131,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
+            startingLineNumber = "352"
+            endingLineNumber = "352"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -4147,11 +4147,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodsDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "279"
-            endingLineNumber = "279"
+            startingLineNumber = "280"
+            endingLineNumber = "280"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -4163,11 +4163,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/GoodsDetailTableViewController.m"
-            timestampString = "478785646.16683"
+            timestampString = "479380726.880121"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "277"
-            endingLineNumber = "277"
+            startingLineNumber = "278"
+            endingLineNumber = "278"
             landmarkName = "-pressedBuy"
             landmarkType = "5">
          </BreakpointContent>
@@ -4179,12 +4179,156 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BeautyWhere/UI/HomePage/HomeViewController.m"
-            timestampString = "479187402.770277"
+            timestampString = "479373382.035056"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "758"
-            endingLineNumber = "758"
+            startingLineNumber = "763"
+            endingLineNumber = "763"
             landmarkName = "-pressedListBtn:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/CityViewController.m"
+            timestampString = "479373696.0347"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "-pressedBack"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479444653.976356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "481"
+            endingLineNumber = "481"
+            landmarkName = "-webView:didFailLoadWithError:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479444653.976356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "325"
+            endingLineNumber = "325"
+            landmarkName = "-tableView:heightForRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479379544.135928"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
+            landmarkName = "-tableView:heightForRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479444653.976356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "480"
+            endingLineNumber = "480"
+            landmarkName = "-webView:didFailLoadWithError:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479444653.976356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "482"
+            endingLineNumber = "482"
+            landmarkName = "-webView:didFailLoadWithError:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479379627.514325"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479444653.976356"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "322"
+            endingLineNumber = "322"
+            landmarkName = "-tableView:heightForRowAtIndexPath:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BeautyWhere/UI/HomePage/LimitTimeToBuy/OrderDetailTableViewController.m"
+            timestampString = "479379954.704076"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "298"
+            endingLineNumber = "298"
+            landmarkName = "-tableView:heightForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

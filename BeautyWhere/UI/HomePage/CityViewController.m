@@ -22,6 +22,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
     self.navigationController.navigationBar.barTintColor = NavBarColor;
     [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
     UIImage *backImg = [UIImage imageNamed:@"nav-btn-fanhui.png"];
@@ -104,14 +105,17 @@
     [[NSUserDefaults standardUserDefaults] setObject:cell.textLabel.text forKey:@"useraddress"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self.controller updatePositionBtnTitle:cell.textLabel.text];
-    [self pressedBack];
+    [self.navigationController popToViewController:self.controller animated:YES];
+    //[self pressedBack];
 }
 
 #pragma mark - Button Response
 - (void)pressedBack
 {
     [ProgressHUD dismiss];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    //[self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
+    //[self popoverPresentationController];
 }
 
 #pragma mark - Private & Tool

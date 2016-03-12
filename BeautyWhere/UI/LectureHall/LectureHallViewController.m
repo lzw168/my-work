@@ -380,11 +380,14 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
 - (void)initializeOther {
     __weak typeof(self)wself = self;
     NSArray *tmpTypeArr = @[@(CheckGoodsOnSellsTypeLimitToFactory),@(CheckGoodsOnSellsTypeInStore),@(CheckGoodsOnSellsTypeShopping)];
-    [tmpTypeArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [BillPageNetwork showOrderWithUserID:User.userID withType:[obj integerValue] withPageNum:@"1" withSucceedBlock:^(NSMutableArray *orderArr) {
+    [tmpTypeArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
+     {
+        [BillPageNetwork showOrderWithUserID:User.userID withType:[obj integerValue] withPageNum:@"1" withSucceedBlock:^(NSMutableArray *orderArr)
+         {
             CustomTableView *table = nil;
             NSMutableArray *currentArr = nil;
-            switch (idx) {
+            switch (idx)
+            {
                 case 0:
                     table = wself.limitFactoryTable;
                     currentArr = wself.limitFactoryInfosArr;
@@ -400,18 +403,22 @@ typedef NS_ENUM(NSInteger, InformationPageType) {
             }
             [currentArr removeAllObjects];
             [currentArr addObjectsFromArray:orderArr];
-        } withErrorBlock:^(NSError *err) {
+        } withErrorBlock:^(NSError *err)
+        {
             NSLog(@"initializeOther err:%@",err);
         }];
     }];
 }
 
 #pragma mark - Button Response
-- (void)relink {
-    if (![[AFHTTPRequestOperationManager manager].reachabilityManager isReachable]) {
+- (void)relink
+{
+    if (![[AFHTTPRequestOperationManager manager].reachabilityManager isReachable])
+    {
         return;
     }
-    else {
+    else
+    {
         [ProgressHUD show:@"连接在，请稍后..." Interaction:NO Hide:NO];
         [self startNet];
     }

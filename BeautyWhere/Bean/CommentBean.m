@@ -10,8 +10,10 @@
 
 @implementation CommentBean
 
-- (instancetype)initWithDic:(NSDictionary *)dic {
-    if (self = [super init]) {
+- (instancetype)initWithDic:(NSDictionary *)dic
+{
+    if (self = [super init])
+    {
         self.commentID = [dic valueNull2NilForKey:@"id"];
         self.commentPartnerID = [dic valueNull2NilForKey:@"partner_id"];
         self.commentUserID = [dic valueNull2NilForKey:@"user_id"];

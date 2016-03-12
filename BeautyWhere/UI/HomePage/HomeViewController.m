@@ -639,8 +639,13 @@ static const NSInteger tableHeaderViewHeight = 120;
     l.title = @"选择省份";
     l.locatedCity = self.gpsCity;
     l.controller = self;
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:l];
-    [self presentViewController:nav animated:YES completion:nil];
+    [self hideCustomNavTitle:YES];
+    l.hidesBottomBarWhenPushed = YES;
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
+    l.edgesForExtendedLayout = UIRectEdgeNone;
+    //UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:l];
+    //[self presentViewController:nav animated:YES completion:nil];
+    [self.navigationController pushViewController:l animated:YES];
 }
 
 - (void)pressedListBtn:(UITapGestureRecognizer *)tap
@@ -805,8 +810,6 @@ static const NSInteger tableHeaderViewHeight = 120;
                         NearbyStoreViewController *targetViewController = [[NearbyStoreViewController alloc] init];
                         targetViewController.title = @"线下特惠";
                         targetViewController.StoreType = @"1";
-                        /*NSUserDefaults *accountDefaults = [NSUserDefaults standardUserDefaults];
-                         NSString *gameuseradd= [accountDefaults objectForKey:@"useraddress"];*/
                         NSLog(@"self.city==========%@",self.city);
                         ((NearbyStoreViewController*)targetViewController).locatedCity = self.city;
                         GetAppDelegate.paySource = @"0";
@@ -936,9 +939,6 @@ static const NSInteger tableHeaderViewHeight = 120;
          store.goodsOnSellsType = 2;
          store.siglegoods = good;
          store.activity_id = ActivityId;
-         /*store.goods.goodsName = goods.goodName;
-          store.goods.goodsNowPrice = goods.goodPrice;
-          store.goods.goodsIntro = goods.goodIntro;*/
          store.edgesForExtendedLayout = UIRectEdgeNone;
          [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin) forBarMetrics:UIBarMetricsDefault];
          [self.navigationController pushViewController:store animated:YES];

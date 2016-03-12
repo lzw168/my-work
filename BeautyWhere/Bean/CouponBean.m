@@ -10,8 +10,10 @@
 
 @implementation CouponBean
 
-- (instancetype)initWithDic:(NSDictionary *)dic {
-    if (self = [super init]) {
+- (instancetype)initWithDic:(NSDictionary *)dic
+{
+    if (self = [super init])
+    {
         self.couponCouponID = [dic valueNull2NilForKey:@"coupon_id"];
         self.couponID = [dic valueNull2NilForKey:@"id"];
         self.couponUserID = [dic valueNull2NilForKey:@"user_id"];

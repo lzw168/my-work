@@ -42,6 +42,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.delegate = self;
+    self.tableView.scrollEnabled = YES;
     self.goodnum = 1;
     
     NSUserDefaults *accountDefaults = [NSUserDefaults standardUserDefaults];
@@ -277,6 +278,7 @@
             }
             [self.provision loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
             [cell.contentView addSubview:self.provision];
+            break;
         }
             break;
     }
@@ -291,7 +293,8 @@
 }
 
 #pragma mark - UITableViewDelegate
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     switch (indexPath.section)
     {
         case 0:
@@ -309,11 +312,18 @@
             }
             break;
         case 1:
-            return ScreenHeight*2.38;
+            //return ScreenHeight*2.38;
             //return 400;
+            //return self.view.frame.size.height - 240;
+            //return self.provision.frame.size.height;
+        {
+            //return self.provision.scrollView.contentSize.height;
+            return ScreenHeight*2.38;
             break;
+        }
         default:
-            return 10+[self.goods.goodsContent boundingRectWithSize:CGSizeMake(ScreenWidth-20, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17]} context:nil].size.height;
+            /*return 10+[self.goods.goodsContent boundingRectWithSize:CGSizeMake(ScreenWidth-20, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17]} context:nil].size.height;*/
+            return self.provision.scrollView.contentSize.height;
             break;
     }
 }
@@ -450,7 +460,7 @@
 {
     CGRect frame = self.provision.frame;
     frame.size.width = self.view.frame.size.width;
-    frame.size.height = 1;
+    frame.size.height = 0;
     
     // wb.scrollView.scrollEnabled = NO;
     self.provision.frame = frame;
@@ -459,7 +469,10 @@
     
     NSLog(@"frame = %@", [NSValue valueWithCGRect:frame]);
     self.provision.frame = frame;
+    //[self.tableView beginUpdates];
+    //[self.tableView endUpdates];
     [ProgressHUD dismiss];
+    //[self.tableView reloadData];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(nullable NSError *)error

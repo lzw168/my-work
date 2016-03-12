@@ -108,16 +108,17 @@
     l.locatedCity = self.locatedCity;
     l.Province = cell.textLabel.text;
     l.controller = self.controller;
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:l];
-    [self presentViewController:nav animated:YES completion:nil];
-
+    //UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:l];
+    //[self presentViewController:nav animated:YES completion:nil];
+    [self.navigationController pushViewController:l animated:YES];
 }
 
 #pragma mark - Button Response
 - (void)pressedBack
 {
     [ProgressHUD dismiss];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    //[self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Private & Tool

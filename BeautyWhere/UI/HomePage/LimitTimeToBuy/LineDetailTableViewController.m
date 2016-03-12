@@ -190,7 +190,8 @@
 }
 
 #pragma mark - UITableViewDelegate
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
     switch (indexPath.section)
     {
         case 0:
@@ -209,6 +210,7 @@
             break;
         case 1:
             return ScreenHeight*2.38;
+            //return self.provision.scrollView.contentSize.height;
             break;
         default:
             return 10+[self.goods.goodsIntro boundingRectWithSize:CGSizeMake(ScreenWidth-20, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17]} context:nil].size.height;
@@ -361,6 +363,8 @@
     
     NSLog(@"frame = %@", [NSValue valueWithCGRect:frame]);
     self.provision.frame = frame;
+    //[self.tableView beginUpdates];
+    //[self.tableView endUpdates];
 
 }
 

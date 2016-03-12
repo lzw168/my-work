@@ -10,8 +10,10 @@
 
 @implementation InfoBean
 
-- (instancetype)initWithDic:(NSDictionary *)dic {
-    if (self = [super init]) {
+- (instancetype)initWithDic:(NSDictionary *)dic
+{
+    if (self = [super init])
+    {
         self.infoCreateTime = [dic valueNull2NilForKey:@"create_time"];
         self.infoDetail = [dic valueNull2NilForKey:@"detail"];
         self.infoID = [dic valueNull2NilForKey:@"id"];

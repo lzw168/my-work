@@ -12,7 +12,8 @@
 
 - (instancetype)initWithDic:(NSDictionary *)dic
 {
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         self.goodsSeckillState = [dic valueNull2NilForKey:@"state"];
         self.goodsVirtualNum = [dic valueNull2NilForKey:@"virtualnum"];
         self.goodsUseTime = [dic valueNull2NilForKey:@"usetime"];

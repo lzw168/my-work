@@ -10,8 +10,10 @@
 
 @implementation BillBean
 
-- (instancetype)initWithDic:(NSDictionary *)dic {
-    if (self = [super init]) {
+- (instancetype)initWithDic:(NSDictionary *)dic
+{
+    if (self = [super init])
+    {
         self.billID = [dic valueNull2NilForKey:@"id"];
         self.billPayID = [dic valueNull2NilForKey:@"pay_id"];
         self.billBuyID = [dic valueNull2NilForKey:@"buy_id"];

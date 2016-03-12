@@ -58,13 +58,14 @@
     goodsName.text = [NSString stringWithFormat:@"产品名称:%@",self.infoBean.billOrderTitle];
     
     UILabel *payState = (UILabel *)[self.moveContentView viewWithTag:billListPayStateTag];
-    if (!payState) {
+    if (!payState)
+    {
         payState = [[UILabel alloc] initWithFrame:CGRectMake(billID.frame.origin.x, 15+goodsName.frame.origin.y+goodsName.frame.size.height, billID.frame.size.width, 13)];
         payState.tag = billListPayStateTag;
         [self.moveContentView addSubview:payState];
     }
     NSString *payStateStr = self.infoBean.billState;
-    if ([payStateStr isEqualToString:@"unpay"]) {
+    if ([payStateStr isEqualToString:@"‘"]) {
         payState.text = @"未支付";
     }
     else if ([payStateStr isEqualToString:@"cancel"]) {
